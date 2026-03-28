@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase Admin — Inventory</title>
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="sec-hdr">
+    <div class="page-title" style="margin:0;">Inventory</div>
+    <button class="btn btn-grn btn-sm" onclick="openAdd()">+ Add Product</button>
+  </div>
+  <div style="background:var(--adim);border:1px solid rgba(79,126,247,.18);border-radius:var(--r2);padding:9px 13px;font-size:.78rem;color:var(--t2);margin-bottom:14px;">Changes apply live — customers see updated stock immediately. Removing a product clears it from all carts.</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;">
+    <table class="dtbl"><thead><tr><th></th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="sb"></tbody></table>
+  </div>
+</main>
+</div>
+<!-- ADD MODAL -->
+<div class="mov hidden" id="addmod">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mhdr"><h3>Add Product</h3><button class="mclose" onclick="closeAdd()">&#x2715;</button></div>
+    <div class="field"><label>Product Name<span class="req">*</span></label><input type="text" id="nn" placeholder="e.g. Bluetooth Speaker"></div>
+    <div class="field"><label>Icon</label><div class="epick" id="ep"></div></div>
+    <div class="g2">
+      <div class="field"><label>Price (£)<span class="req">*</span></label><div class="iw"><span class="ipfx">£</span><input type="number" id="np" class="hpfx" placeholder="0.00" step="0.01" min="0.01"></div></div>
+      <div class="field"><label>Initial Stock<span class="req">*</span></label><input type="number" id="ns" placeholder="50" min="0"></div>
+    </div>
+    <div class="field"><label>Category</label><select id="nc"><option>Electronics</option><option>Fashion</option><option>Home</option><option>Fitness</option><option>Other</option></select></div>
+    <div class="mfoot"><button class="btn btn-grn" onclick="saveP()" style="background:var(--green);color:#fff;">Add Product</button><button class="btn btn-g" onclick="closeAdd()">Cancel</button></div>
+  </div>
+</div>
+<script src="../js/state.js"></script>
+<script src="../js/nav.js"></script>
+<script>
+Nav.init({page:'stock',adminOnly:true});
+const EMOJIS='🎧👟☕🧘💻💧💡🎒⌚🏋🕯🕶📱🖥⌨🖱📷🎮🎵📚🧴👜👒🌂🏀⚽🎸🍕🍷🧃🌿🧸🎁💎🪴🕹🎨'.split('');
+let selE='📦';
+function stag(s){if(s===0)return'<span class="stag sout">Out of stock</span>';if(s<=5)return'<span class="stag slow">Only '+s+' left</span>';return'<span class="stag sin">In stock</span>';}
+function render(){document.getElementById('sb').innerHTML=State.getProds().map(p=>'<tr><td style="font-size:1.45rem;width:38px;">'+p.emoji+'</td><td><strong>'+p.name+'</strong></td><td><span class="bdg bdg-b">'+p.cat+'</span></td><td style="color:var(--accent);font-weight:600;">£'+p.price.toFixed(2)+'</td><td><input class="sinp" type="number" value="'+p.stock+'" min="0" onchange="updS('+p.id+',this.value)"></td><td>'+stag(p.stock)+'</td><td><button class="btn btn-r btn-sm" onclick="rmP('+p.id+')">Remove</button></td></tr>').join('');}
+function updS(id,val){const prods=State.getProds(),p=prods.find(x=>x.id===id);if(!p)return;p.stock=Math.max(0,parseInt(val)||0);State.setProds(prods);render();Nav.toast('Stock updated: '+p.emoji+' '+p.name,'s');}
+function rmP(id){const p=State.getProds().find(x=>x.id===id);if(!confirm('Remove "'+p.name+'" from catalogue?'))return;State.setProds(State.getProds().filter(x=>x.id!==id));State.setCart(State.getCart().filter(x=>x.id!==id));render();Nav.toast(p.emoji+' '+p.name+' removed','i');}
+function openAdd(){selE='📦';document.getElementById('nn').value='';document.getElementById('np').value='';document.getElementById('ns').value='';document.getElementById('ep').innerHTML=EMOJIS.map(e=>'<div class="eo'+(e===selE?' sel':'')+'" onclick="pe(\''+e+'\')" >'+e+'</div>').join('');document.getElementById('addmod').classList.remove('hidden');}
+function closeAdd(){document.getElementById('addmod').classList.add('hidden');}
+function pe(e){selE=e;document.querySelectorAll('.eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
+function saveP(){const name=document.getElementById('nn').value.trim(),price=parseFloat(document.getElementById('np').value),stock=parseInt(document.getElementById('ns').value)||0,cat=document.getElementById('nc').value;if(!name||isNaN(price)||price<=0){Nav.toast('Please fill all required fields.','e');return;}const prods=State.getProds();prods.push({id:Math.max(...prods.map(p=>p.id),200)+1,name,emoji:selE,price,cat,stars:4.0,reviews:0,stock});State.setProds(prods);closeAdd();render();Nav.toast(selE+' '+name+' added!','s');}
+render();
+</script>
+</body>
+</html>

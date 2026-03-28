@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase — Cart</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="page-title">Your Cart</div>
+  <div id="cc"></div>
+</main>
+</div>
+<script src="js/state.js"></script>
+<script src="js/nav.js"></script>
+<script>
+Nav.init({page:'cart'});
+const DELS={standard:3.99,express:7.99,free:0};
+let del='standard',promo=0,promoOn=false;
+const PCODES={SAVE10:{t:'pct',v:10},FIRST5:{t:'fix',v:5}};
+function render(){
+  const cart=State.getCart(),el=document.getElementById('cc');
+  if(!cart.length){el.innerHTML='<div class="empty"><div class="ei">⊞</div><p>Your cart is empty.</p><a href="shop.html" class="btn btn-p">Browse products</a></div>';return;}
+  const sub=State.cartSub(),exv=sub/1.2,vat=sub-exv,ship=DELS[del],tot=Math.max(0,sub+ship-promo).toFixed(2);
+  el.innerHTML='<div style="display:grid;grid-template-columns:1fr 294px;gap:14px;align-items:start;">'
+    +'<div>'+cart.map(i=>'<div class="citem"><div style="display:flex;align-items:center;gap:11px;"><span style="font-size:1.65rem;">'+i.emoji+'</span><div><div style="font-weight:600;font-size:.87rem;color:var(--text);">'+i.name+'</div><div style="font-size:.73rem;color:var(--t3);">£'+i.price.toFixed(2)+' each · '+i.cat+'</div></div></div><div style="display:flex;align-items:center;gap:9px;"><div class="qrow"><button class="qbtn" onclick="chg('+i.id+',-1)">&#8722;</button><span class="qnum">'+i.qty+'</span><button class="qbtn" onclick="chg('+i.id+',1)">+</button></div><span style="font-weight:700;min-width:52px;text-align:right;color:var(--text);">£'+(i.price*i.qty).toFixed(2)+'</span><button class="qbtn" onclick="rm('+i.id+')" style="color:var(--red);border-color:var(--rdim);">&#x2715;</button></div></div>').join('')
+    +'<div class="card" style="margin-top:10px;"><div style="font-size:.86rem;font-weight:600;margin-bottom:13px;">Delivery</div>'
+    +Object.entries({standard:'Standard (3–5 days)',express:'Express (next day)',free:'Free (5–7 days)'}).map(([k,lb])=>'<label class="delopt'+(del===k?' sel':'')+'" onclick="setDel(\''+k+'\')" ><input type="radio" name="del" value="'+k+'" '+(del===k?'checked':'')+'><div style="flex:1;font-size:.83rem;font-weight:500;">'+lb+'</div><span style="font-size:.83rem;font-weight:700;">'+(DELS[k]===0?'FREE':'£'+DELS[k].toFixed(2))+'</span></label>').join('')
+    +'</div><div class="card" style="margin-top:10px;"><div style="font-size:.86rem;font-weight:600;margin-bottom:11px;">Promo Code</div><div class="promo-row"><input type="text" id="pc" placeholder="e.g. SAVE10"><button class="btn btn-d btn-sm" onclick="applyP()">Apply</button></div><div class="ferr" id="pe">Invalid code.</div><div class="fok" id="pok"></div></div></div>'
+    +'<div style="position:sticky;top:70px;"><div class="sumpanel"><div style="font-size:.86rem;font-weight:600;margin-bottom:13px;">Order Summary</div>'
+    +cart.map(i=>'<div class="sumline"><span>'+i.emoji+' '+i.name+' ×'+i.qty+'</span><span class="sv">£'+(i.price*i.qty).toFixed(2)+'</span></div>').join('')
+    +'<div class="hr"></div><div class="sumline"><span>Subtotal (ex. VAT)</span><span class="sv">£'+exv.toFixed(2)+'</span></div><div class="sumline"><span>VAT (20%)</span><span class="sv">£'+vat.toFixed(2)+'</span></div><div class="sumline"><span>Delivery</span><span class="sv">'+(ship===0?'FREE':'£'+ship.toFixed(2))+'</span></div>'+(promo>0?'<div class="sumline" style="color:var(--green);"><span>Discount</span><span class="sv" style="color:var(--green);">&#8722;£'+promo.toFixed(2)+'</span></div>':'')+'<div class="sumline tot"><span>Total</span><span class="sv">£'+tot+'</span></div><a href="checkout.html" class="btn btn-p btn-full" style="margin-top:13px;">Proceed to Checkout &#8594;</a><button class="btn btn-g btn-full btn-sm" style="margin-top:7px;" onclick="if(confirm(\'Clear cart?\')){{State.clearCart();render();}}">Clear Cart</button></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-top:11px;"><span class="bdg bdg-g">🔒 SSL</span><span class="bdg bdg-b">PCI DSS</span><span class="bdg bdg-n">↩ 30-Day Returns</span></div></div></div>';
+}
+function chg(id,d){const cart=State.getCart(),prods=State.getProds(),item=cart.find(i=>i.id===id),prod=prods.find(p=>p.id===id);if(!item)return;if(d>0&&prod&&item.qty>=prod.stock){Nav.toast('No more stock','e');return;}item.qty+=d;if(item.qty<=0){State.track('remove',{name:item.name});State.setCart(cart.filter(i=>i.id!==id));}else State.setCart(cart);render();}
+function rm(id){const i=State.getCart().find(x=>x.id===id);if(i)State.track('remove',{name:i.name});State.setCart(State.getCart().filter(x=>x.id!==id));Nav.toast('Removed','i');render();}
+function setDel(t){del=t;render();}
+function applyP(){const code=(document.getElementById('pc').value||'').trim().toUpperCase(),p=PCODES[code];if(!p){document.getElementById('pe').classList.add('on');document.getElementById('pok').classList.remove('on');promo=0;promoOn=false;}else{promo=p.t==='pct'?State.cartSub()*p.v/100:p.v;promoOn=true;document.getElementById('pe').classList.remove('on');const ok=document.getElementById('pok');ok.classList.add('on');ok.textContent='✓ £'+promo.toFixed(2)+' discount applied!';Nav.toast('Promo applied!','s');}render();}
+render();
+</script>
+</body>
+</html>

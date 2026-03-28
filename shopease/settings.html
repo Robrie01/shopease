@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase — Settings</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="page-title">Account Settings</div>
+  <div class="ssec">
+    <h3>Profile</h3><p class="sdesc">Manage your display name and contact preferences.</p>
+    <div class="g2">
+      <div class="field"><label>Full Name</label><input type="text" id="sn" placeholder="Your name"></div>
+      <div class="field"><label>Email Address</label><input type="email" id="se" readonly style="opacity:.55;cursor:not-allowed;"></div>
+    </div>
+    <button class="btn btn-p btn-sm" onclick="savePro()">Save Changes</button>
+  </div>
+  <div class="ssec">
+    <h3>Change Password</h3><p class="sdesc">Use a strong password with letters, numbers and symbols.</p>
+    <div class="field"><label>Current Password<span class="req">*</span></label><div class="iw"><input type="password" id="cp" placeholder="Current password"><span class="iico" onclick="tp('cp',this)">◉</span></div></div>
+    <div class="field"><label>New Password<span class="req">*</span></label><div class="iw"><input type="password" id="np" placeholder="Min. 8 characters" oninput="V.pwBars('np','pws')"><span class="iico" onclick="tp('np',this)">◉</span></div><div class="pwbars"><div class="pwbar" id="pws_b0"></div><div class="pwbar" id="pws_b1"></div><div class="pwbar" id="pws_b2"></div><div class="pwbar" id="pws_b3"></div></div><div class="pwlbl" id="pws_l"></div></div>
+    <div class="field"><label>Confirm New Password<span class="req">*</span></label><input type="password" id="npc" placeholder="Repeat password"><div class="ferr" id="pwerr">Passwords don't match or too short.</div></div>
+    <button class="btn btn-p btn-sm" onclick="chgPw()">Update Password</button>
+  </div>
+  <div class="ssec">
+    <h3>Cookie Preferences</h3><p class="sdesc">Manage how ShopEase uses cookies on your device.</p>
+    <div id="ckst" style="font-size:.81rem;color:var(--t2);margin-bottom:13px;"></div>
+    <div style="display:flex;gap:7px;">
+      <button class="btn btn-g btn-sm" onclick="sc('essential')">Essential Only</button>
+      <button class="btn btn-d btn-sm" onclick="Nav.showModal('cookies')">View Policy</button>
+      <button class="btn btn-p btn-sm" onclick="sc('all')">Accept All</button>
+    </div>
+  </div>
+  <div class="ssec">
+    <h3>Your Data &amp; Privacy Rights</h3><p class="sdesc">Your rights under UK GDPR. ShopEase is committed to transparent, lawful data processing.</p>
+    <div class="drow"><div class="drow-i"><div class="drow-t">Download My Data</div><div class="drow-d">Export all data we hold about you (UK GDPR Article 15 — Right of Access)</div></div><button class="btn btn-d btn-sm" onclick="dlData()">Download</button></div>
+    <div class="drow"><div class="drow-i"><div class="drow-t">Marketing Preferences</div><div class="drow-d">Withdraw or update marketing consent (UK GDPR Article 21 — Right to Object)</div></div><div style="display:flex;align-items:center;gap:8px;"><span id="mkts" style="font-size:.74rem;color:var(--t2);"></span><button class="btn btn-g btn-sm" onclick="togMkt()" id="mktb">...</button></div></div>
+    <div class="drow"><div class="drow-i"><div class="drow-t">Data Portability</div><div class="drow-d">Receive your data in machine-readable JSON format (UK GDPR Article 20)</div></div><button class="btn btn-d btn-sm" onclick="dlData()">Export JSON</button></div>
+    <div class="drow"><div class="drow-i"><div class="drow-t">Request Rectification</div><div class="drow-d">Request correction of inaccurate data (UK GDPR Article 16)</div></div><button class="btn btn-d btn-sm" onclick="Nav.toast('Rectification request submitted. We will respond within 30 days.','i')">Request</button></div>
+    <div style="font-size:.73rem;color:var(--t3);margin-top:14px;line-height:1.7;">Data Controller: ShopEase Ltd &nbsp;·&nbsp; DPO: privacy@shopease.com &nbsp;·&nbsp; ICO: ZA000000 &nbsp;·&nbsp; <a onclick="Nav.showModal('privacy')" style="cursor:pointer;">Privacy Policy</a> &nbsp;·&nbsp; <a onclick="Nav.showModal('terms')" style="cursor:pointer;">Terms</a></div>
+  </div>
+  <div class="ssec dzone">
+    <h3>Danger Zone</h3><p class="sdesc">Permanently delete your account and all associated data. This cannot be undone.</p>
+    <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:var(--r2);padding:15px;margin-bottom:13px;">
+      <div style="font-size:.8rem;color:var(--t2);margin-bottom:12px;line-height:1.65;">Deleting your account will permanently remove your profile, order history, addresses, wishlist, and preferences. Exercised under <strong style="color:var(--text);">UK GDPR Article 17 (Right to Erasure)</strong>. Order records may be retained for 7 years for legal/tax purposes.</div>
+      <div class="field"><label>Type <strong>DELETE</strong> to confirm</label><input type="text" id="delc" placeholder="DELETE" style="max-width:200px;"></div>
+      <button class="btn btn-r" onclick="delAcc()">Delete My Account</button>
+    </div>
+  </div>
+</main>
+</div>
+<script src="js/state.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/nav.js"></script>
+<script>
+const user=Nav.init({page:'settings'});
+if(user){document.getElementById('sn').value=user.name||'';document.getElementById('se').value=user.email||'';}
+const ck=State.getCookies();document.getElementById('ckst').textContent=ck?'Current: '+(ck==='all'?'All cookies':'Essential only'):'No preference set.';
+function updMkt(){const u=State.getUser(),m=u&&u.mkt;document.getElementById('mkts').textContent=m?'Opted in':'Opted out';document.getElementById('mktb').textContent=m?'Withdraw':'Opt In';}updMkt();
+function sc(lv){State.setCookies(lv);document.getElementById('ckst').textContent='Current: '+(lv==='all'?'All cookies':'Essential only');Nav.toast('Cookie preference updated.','s');}
+function savePro(){const u=State.getUser();if(!u)return;u.name=document.getElementById('sn').value.trim()||u.name;State.setUser(u);Nav.toast('Profile saved.','s');}
+function tp(id,ic){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';ic.textContent=el.type==='password'?'◉':'◎';}
+function chgPw(){const cur=document.getElementById('cp').value,nw=document.getElementById('np').value,conf=document.getElementById('npc').value,err=document.getElementById('pwerr');if(!cur||nw.length<8||nw!==conf){err.classList.add('on');return;}err.classList.remove('on');const u=State.getUser();const ok=u&&u.email?State.changePw(u.email,cur,nw):false;if(ok){Nav.toast('Password updated.','s');['cp','np','npc'].forEach(id=>document.getElementById(id).value='');}else Nav.toast('Current password is incorrect.','e');}
+function togMkt(){const u=State.getUser();if(!u)return;u.mkt=!u.mkt;State.setUser(u);updMkt();Nav.toast(u.mkt?'Marketing consent given.':'Marketing consent withdrawn.','i');}
+function dlData(){const u=State.getUser();if(u){State.downloadData(u);Nav.toast('Data export downloaded.','s');}}
+function delAcc(){if(document.getElementById('delc').value!=='DELETE'){Nav.toast('Type DELETE to confirm.','e');return;}const u=State.getUser();if(u&&u.email)State.deleteAccount(u.email);else State.clearUser();Nav.toast('Account deleted.','i');setTimeout(()=>window.location.href='index.html',1500);}
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase — Checkout</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="page-title">Secure Checkout <span style="font-size:.7rem;font-weight:400;color:var(--green);margin-left:4px;">🔒 SSL</span></div>
+  <div class="stepbar"><div class="step on" id="s1"><div class="sdot">1</div>Details</div><div class="sline"></div><div class="step" id="s2"><div class="sdot">2</div>Delivery</div><div class="sline"></div><div class="step" id="s3"><div class="sdot">3</div>Payment</div><div class="sline"></div><div class="step" id="s4"><div class="sdot">4</div>Confirm</div></div>
+  <div id="gn" class="hidden" style="background:var(--adim);border:1px solid rgba(79,126,247,.2);border-radius:var(--r2);padding:9px 13px;font-size:.79rem;color:var(--t2);margin-bottom:14px;">Checking out as a guest — you can create a free account after placing your order.</div>
+  <div class="colayout">
+    <div>
+      <div class="card" style="margin-bottom:11px;">
+        <div class="card-hdr"><div class="card-ttl">Contact Information</div></div>
+        <div class="g2">
+          <div class="field"><label>First Name<span class="req">*</span></label><input type="text" id="fn" placeholder="John" oninput="vr('fn','fne')"><div class="ferr" id="fne">Required.</div></div>
+          <div class="field"><label>Last Name<span class="req">*</span></label><input type="text" id="ln" placeholder="Smith" oninput="vr('ln','lne')"><div class="ferr" id="lne">Required.</div></div>
+        </div>
+        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="em" placeholder="you@email.com" oninput="V.vf('em','eme','emok',V.email)"><div class="ferr" id="eme">Invalid email.</div><div class="fok" id="emok">Valid email</div></div>
+        <div class="field"><label>Phone<span class="req">*</span></label><div class="iw"><span class="ipfx" style="font-size:.76rem;">📞</span><input type="tel" id="ph" class="hpfx" placeholder="+44 7700 900000" oninput="V.vf('ph','phe','',V.phone)"><div class="ferr" id="phe">Valid UK phone required.</div></div></div>
+      </div>
+      <div class="card" style="margin-bottom:11px;">
+        <div class="card-hdr"><div class="card-ttl">Delivery Address</div></div>
+        <div class="field"><label>Address Line 1<span class="req">*</span></label><input type="text" id="a1" placeholder="123 High Street" oninput="vr('a1','a1e')"><div class="ferr" id="a1e">Required.</div></div>
+        <div class="field"><label>Address Line 2 <span style="color:var(--t3);">Optional</span></label><input type="text" id="a2" placeholder="Apartment, unit..."></div>
+        <div class="g2">
+          <div class="field"><label>City<span class="req">*</span></label><input type="text" id="cy" placeholder="Belfast" oninput="vr('cy','cye')"><div class="ferr" id="cye">Required.</div></div>
+          <div class="field"><label>Postcode<span class="req">*</span></label><input type="text" id="pc" placeholder="BT1 1AA" style="text-transform:uppercase;" oninput="vpc()"><div class="ferr" id="pce">Valid UK postcode required.</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:11px;">
+        <div class="card-hdr"><div class="card-ttl">Delivery Method</div></div>
+        <label class="delopt sel" id="ds" onclick="sdel('standard')"><input type="radio" name="del" checked><div style="flex:1;"><div style="font-weight:600;font-size:.85rem;">Standard</div><div style="font-size:.73rem;color:var(--t3);">3–5 working days</div></div><span style="font-weight:700;font-size:.85rem;">£3.99</span></label>
+        <label class="delopt" id="de" onclick="sdel('express')"><input type="radio" name="del"><div style="flex:1;"><div style="font-weight:600;font-size:.85rem;">Express</div><div style="font-size:.73rem;color:var(--t3);">Next working day (before 2pm)</div></div><span style="font-weight:700;font-size:.85rem;">£7.99</span></label>
+        <label class="delopt" id="df" onclick="sdel('free')"><input type="radio" name="del"><div style="flex:1;"><div style="font-weight:600;font-size:.85rem;">Free Delivery</div><div style="font-size:.73rem;color:var(--t3);">5–7 working days</div></div><span class="bdg bdg-g">FREE</span></label>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">Payment</div></div>
+        <div class="ctypes"><div class="cpill" id="cv">Visa</div><div class="cpill" id="cm">Mastercard</div><div class="cpill" id="ca">Amex</div></div>
+        <div class="field"><label>Card Number<span class="req">*</span></label><div class="iw"><input type="text" id="cn" placeholder="1234 5678 9012 3456" maxlength="19" style="font-family:'Courier New',monospace;letter-spacing:1px;" oninput="ocn()" onblur="vcn()"><span class="iico" id="cvi" style="pointer-events:none;right:8px;"></span></div><div class="ferr" id="cne">Invalid card number.</div></div>
+        <div class="g2">
+          <div class="field"><label>Expiry<span class="req">*</span></label><input type="text" id="cx" placeholder="MM / YY" maxlength="7" oninput="V.fmtExp('cx')" onblur="vexp()"><div class="ferr" id="cxe">Invalid or expired.</div></div>
+          <div class="field"><label>CVV<span class="req">*</span></label><div class="iw"><input type="password" id="cv2" placeholder="•••" maxlength="4" oninput="vcvv()"><span class="iico" title="3 digits on back (4 for Amex)" style="cursor:default;pointer-events:none;font-size:.7rem;">?</span></div><div class="ferr" id="cve">Invalid CVV.</div></div>
+        </div>
+        <div class="field"><label>Name on Card<span class="req">*</span></label><input type="text" id="cname" placeholder="JOHN SMITH" style="text-transform:uppercase;" oninput="vr('cname','cnamee')"><div class="ferr" id="cnamee">Required.</div></div>
+        <div class="field"><label>Promo Code</label><div class="promo-row"><input type="text" id="promo" placeholder="e.g. SAVE10"><button class="btn btn-d btn-sm" onclick="applyP()">Apply</button></div><div class="ferr" id="prome">Invalid code.</div><div class="fok" id="promok"></div></div>
+        <div class="gdprnote">🔒 Payment processed by our PCI DSS Level 1 provider. Card data is <strong>never stored</strong> on ShopEase servers. <a onclick="Nav.showModal('privacy')" style="cursor:pointer;">Privacy Policy</a></div>
+        <div class="consentrow"><input type="checkbox" id="tc" required><label for="tc">I agree to the <a onclick="Nav.showModal('terms')" style="cursor:pointer;">Terms &amp; Conditions</a> and <a onclick="Nav.showModal('privacy')" style="cursor:pointer;">Privacy Policy</a>.<span class="req">*</span></label></div>
+        <div class="consentrow"><input type="checkbox" id="mc"><label for="mc">I'd like to receive personalised offers by email. (Optional)</label></div>
+        <div class="trust"><span class="bdg bdg-g">🔒 SSL</span><span class="bdg bdg-b">PCI DSS L1</span><span class="bdg bdg-n">UK GDPR</span><span class="bdg bdg-n">↩ 30-Day Returns</span></div>
+      </div>
+    </div>
+    <div style="position:sticky;top:68px;">
+      <div class="sumpanel">
+        <div style="font-size:.86rem;font-weight:600;margin-bottom:13px;">Order Summary</div>
+        <div id="ol"></div>
+        <div class="hr"></div>
+        <div class="sumline"><span>Subtotal (ex. VAT)</span><span class="sv" id="ss">£0.00</span></div>
+        <div class="sumline"><span>VAT (20%)</span><span class="sv" id="sv">£0.00</span></div>
+        <div class="sumline"><span id="dl">Delivery</span><span class="sv" id="sd">£3.99</span></div>
+        <div class="sumline hidden" id="dscl" style="color:var(--green);"><span>Discount</span><span class="sv" id="dscv" style="color:var(--green);"></span></div>
+        <div class="sumline tot"><span>Total</span><span class="sv" id="st">£0.00</span></div>
+        <button class="btn btn-p btn-full btn-lg" id="paybtn" onclick="pay()" style="margin-top:14px;">🔒 Pay <span id="pt">£0.00</span></button>
+        <p style="font-size:.67rem;color:var(--t3);text-align:center;margin-top:9px;">256-bit encrypted · PCI DSS compliant</p>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<div class="sucov hidden" id="sov">
+  <div class="sucbox">
+    <div class="sico">✓</div>
+    <h2>Order Placed!</h2>
+    <p>Order <strong id="oid"></strong> confirmed.<br>Confirmation sent to <strong id="oem"></strong></p>
+    <div id="sup" class="hidden">
+      <div class="upsell">
+        <p><strong style="color:var(--accent);">Save time next order.</strong> Create a free account in seconds.</p>
+        <div class="field"><label>Choose a Password<span class="req">*</span></label><div class="iw"><input type="password" id="np" placeholder="Min. 8 characters" oninput="V.pwBars('np','pws')"><span class="iico" onclick="tnp(this)">◉</span></div><div class="pwbars"><div class="pwbar" id="pws_b0"></div><div class="pwbar" id="pws_b1"></div><div class="pwbar" id="pws_b2"></div><div class="pwbar" id="pws_b3"></div></div><div class="pwlbl" id="pws_l"></div></div>
+        <div class="field"><label>Confirm<span class="req">*</span></label><input type="password" id="npc" placeholder="Repeat password"><div class="ferr" id="spe">Passwords don't match or too short.</div></div>
+        <button class="btn btn-grn btn-full" onclick="signup()" style="background:var(--green);color:#fff;">Create Account</button>
+      </div>
+      <div style="font-size:.74rem;color:var(--t3);text-align:center;margin-top:10px;"><a href="shop.html" style="color:var(--t2);">Skip — continue as guest</a></div>
+    </div>
+    <div id="mc2" class="hidden"><a href="shop.html" class="btn btn-p btn-full">Continue Shopping</a></div>
+  </div>
+</div>
+<script src="js/state.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/nav.js"></script>
+<script>
+const user=Nav.init({page:'checkout'});
+if(user&&user.role==='guest')document.getElementById('gn').classList.remove('hidden');
+if(user&&user.email)document.getElementById('em').value=user.email;
+const DL={standard:3.99,express:7.99,free:0};
+let del='standard',disc=0,discOn=false,ctype='';
+const PC={SAVE10:{t:'pct',v:10},FIRST5:{t:'fix',v:5}};
+function vr(id,eid){V.vf(id,eid,'',V.req);}
+function vpc(){const el=document.getElementById('pc');if(el)el.value=el.value.toUpperCase();V.vf('pc','pce','',V.postcode);}
+function ocn(){ctype=V.fmtCard('cn');['cv','cm','ca'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',['visa','mc','amex'][i]===ctype));}
+function vcn(){V.vf('cn','cne','',V.luhn);document.getElementById('cvi').textContent=V.luhn(document.getElementById('cn').value)?'✅':'❌';}
+function vexp(){V.vf('cx','cxe','',V.expiry);}
+function vcvv(){V.vf('cv2','cve','',v=>V.cvv(v,ctype));}
+function sdel(t){del=t;['standard','express','free'].forEach(k=>document.getElementById('d'+k[0]).classList.toggle('sel',k===t));upd();}
+function applyP(){const code=(document.getElementById('promo').value||'').trim().toUpperCase(),p=PC[code];if(!p){document.getElementById('prome').classList.add('on');document.getElementById('promok').classList.remove('on');disc=0;discOn=false;}else{disc=p.t==='pct'?State.cartSub()*p.v/100:p.v;discOn=true;document.getElementById('prome').classList.remove('on');const ok=document.getElementById('promok');ok.classList.add('on');ok.textContent='✓ £'+disc.toFixed(2)+' off!';Nav.toast('Promo applied!','s');}upd();}
+function upd(){const cart=State.getCart(),sub=State.cartSub(),exv=sub/1.2,vat=sub-exv,ship=DL[del],tot=Math.max(0,sub+ship-disc);document.getElementById('ol').innerHTML=cart.map(i=>'<div class="sumline"><span>'+i.emoji+' '+i.name+' ×'+i.qty+'</span><span class="sv">£'+(i.price*i.qty).toFixed(2)+'</span></div>').join('');document.getElementById('ss').textContent='£'+exv.toFixed(2);document.getElementById('sv').textContent='£'+vat.toFixed(2);document.getElementById('sd').textContent=ship===0?'FREE':'£'+ship.toFixed(2);document.getElementById('st').textContent='£'+tot.toFixed(2);document.getElementById('pt').textContent='£'+tot.toFixed(2);document.getElementById('dscl').classList.toggle('hidden',disc<=0);document.getElementById('dscv').textContent='−£'+disc.toFixed(2);}
+function valAll(){let ok=true;if(!V.req(document.getElementById('fn').value)){vr('fn','fne');ok=false;}if(!V.req(document.getElementById('ln').value)){vr('ln','lne');ok=false;}if(!V.email(document.getElementById('em').value)){V.vf('em','eme','emok',V.email);ok=false;}if(!V.phone(document.getElementById('ph').value)){V.vf('ph','phe','',V.phone);ok=false;}if(!V.req(document.getElementById('a1').value)){vr('a1','a1e');ok=false;}if(!V.req(document.getElementById('cy').value)){vr('cy','cye');ok=false;}if(!V.postcode(document.getElementById('pc').value)){vpc();ok=false;}if(!V.luhn(document.getElementById('cn').value)){vcn();ok=false;}if(!V.expiry(document.getElementById('cx').value)){vexp();ok=false;}if(!V.cvv(document.getElementById('cv2').value,ctype)){vcvv();ok=false;}if(!V.req(document.getElementById('cname').value)){vr('cname','cnamee');ok=false;}if(!document.getElementById('tc').checked){Nav.toast('Please accept the Terms to continue.','e');ok=false;}return ok;}
+function pay(){if(!State.getCart().length){Nav.toast('Your cart is empty.','e');return;}if(!valAll()){Nav.toast('Please fix the highlighted fields.','e');return;}const btn=document.getElementById('paybtn');btn.disabled=true;btn.textContent='Processing…';['s1','s2','s3','s4'].forEach(id=>{const e=document.getElementById(id);if(e){e.classList.add('on');}});setTimeout(()=>{const tot=Math.max(0,State.cartSub()+DL[del]-disc),items=State.getCart().reduce((a,i)=>a+i.qty,0),isGuest=user.role==='guest';State.track('purchase',{total:tot,items,isGuest,delivery:del});const prods=State.getProds();State.getCart().forEach(ci=>{const p=prods.find(x=>x.id===ci.id);if(p)p.stock=Math.max(0,p.stock-ci.qty);});State.setProds(prods);const em=document.getElementById('em').value.trim();document.getElementById('oid').textContent='#SE-'+Math.floor(10000+Math.random()*90000);document.getElementById('oem').textContent=em;document.getElementById('sup').classList.toggle('hidden',!isGuest);document.getElementById('mc2').classList.toggle('hidden',isGuest);document.getElementById('sov').classList.remove('hidden');State.clearCart();btn.disabled=false;btn.innerHTML='🔒 Pay <span id="pt">£0.00</span>';},1800);}
+function tnp(ic){const el=document.getElementById('np');el.type=el.type==='password'?'text':'password';ic.textContent=el.type==='password'?'◉':'◎';}
+function signup(){const pw=document.getElementById('np').value,conf=document.getElementById('npc').value,em=document.getElementById('em').value.trim();if(!pw||pw.length<8||pw!==conf){document.getElementById('spe').classList.add('on');return;}document.getElementById('spe').classList.remove('on');const name=(document.getElementById('fn').value+' '+document.getElementById('ln').value).trim();State.addAccount(em,pw,name);window.location.href='shop.html';}
+upd();
+</script>
+</body>
+</html>
