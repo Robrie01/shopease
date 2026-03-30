@@ -24,43 +24,95 @@
   <div class="auth-r">
     <div class="auth-card">
       <div class="auth-tabs">
-        <button class="atab on" id="tab-c" onclick="sw('c')">Customer</button>
+        <button class="atab on" id="tab-c" onclick="sw('c')">Sign In</button>
+        <button class="atab" id="tab-r" onclick="sw('r')">Register</button>
         <button class="atab" id="tab-a" onclick="sw('a')">Admin</button>
       </div>
+
+      <!-- SIGN IN -->
       <div id="fc">
         <div class="auth-h">Welcome back</div>
         <div class="auth-st">Sign in to your ShopEase account</div>
-        <div class="demo-box">Demo: <strong>user@shopease.com</strong> / <strong>password123</strong></div>
         <div class="errbox" id="lerr">Incorrect email or password.</div>
-        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="le" value="user@shopease.com" autocomplete="email"></div>
-        <div class="field"><label>Password<span class="req">*</span></label><div class="iw"><input type="password" id="lp" value="password123" autocomplete="current-password"><span class="iico" onclick="tp('lp',this)">◉</span></div></div>
-        <button class="btn btn-p btn-full btn-lg" onclick="doLogin()" style="margin-bottom:11px;">Sign In</button>
+        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="le" placeholder="your@email.com" autocomplete="email"></div>
+        <div class="field"><label>Password<span class="req">*</span></label><div class="iw"><input type="password" id="lp" autocomplete="current-password"><span class="iico" onclick="tp('lp',this)">◉</span></div></div>
+        <button class="btn btn-p btn-full btn-lg" id="lbtn" onclick="doLogin()" style="margin-bottom:11px;">Sign In</button>
         <div class="auth-div">or</div>
         <button class="btn btn-g btn-full" onclick="doGuest()">Continue as Guest</button>
         <div class="auth-foot">By continuing you agree to our <a onclick="showL('terms')">Terms</a> and <a onclick="showL('privacy')">Privacy Policy</a></div>
       </div>
+
+      <!-- REGISTER -->
+      <div id="fr" style="display:none">
+        <div class="auth-h">Create account</div>
+        <div class="auth-st">Join ShopEase today — it's free</div>
+        <div class="errbox" id="rerr">Something went wrong.</div>
+        <div class="field"><label>Full Name<span class="req">*</span></label><input type="text" id="rn" placeholder="Your name" autocomplete="name"></div>
+        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="re" placeholder="your@email.com" autocomplete="email"></div>
+        <div class="field"><label>Password<span class="req">*</span></label><div class="iw"><input type="password" id="rp" placeholder="Min. 8 characters" autocomplete="new-password"><span class="iico" onclick="tp('rp',this)">◉</span></div></div>
+        <button class="btn btn-p btn-full btn-lg" id="rbtn" onclick="doRegister()" style="margin-bottom:11px;">Create Account</button>
+        <div class="auth-foot">By continuing you agree to our <a onclick="showL('terms')">Terms</a> and <a onclick="showL('privacy')">Privacy Policy</a></div>
+      </div>
+
+      <!-- ADMIN -->
       <div id="fa" style="display:none">
         <div class="auth-h">Admin Console</div>
         <div class="auth-st">Staff access only — all sessions are audited</div>
-        <div class="demo-box">Demo: <strong>admin@shopease.com</strong> / <strong>admin2025</strong></div>
         <div class="errbox" id="aerr">Invalid admin credentials.</div>
-        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="ae" value="admin@shopease.com"></div>
-        <div class="field"><label>Password<span class="req">*</span></label><div class="iw"><input type="password" id="ap" value="admin2025"><span class="iico" onclick="tp('ap',this)">◉</span></div></div>
-        <button class="btn btn-d btn-full btn-lg" onclick="doAdmin()">Sign In to Console</button>
+        <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="ae" placeholder="admin@shopease.com"></div>
+        <div class="field"><label>Password<span class="req">*</span></label><div class="iw"><input type="password" id="ap"><span class="iico" onclick="tp('ap',this)">◉</span></div></div>
+        <button class="btn btn-d btn-full btn-lg" id="abtn" onclick="doAdmin()">Sign In to Console</button>
       </div>
     </div>
   </div>
 </div>
 <script src="js/state.js"></script>
 <script>
+const API = 'http://localhost:7071/api';
+
 (()=>{const u=State.getUser();if(u)window.location.href=u.role==='admin'?'admin/stock.html':'shop.html';})();
 if(!State.getCookies()){const b=document.createElement('div');b.id='ckbanner';b.innerHTML='<p>We use cookies to keep you signed in. See our <a onclick="showL(\'privacy\')" style="cursor:pointer;">Privacy Policy</a>. UK GDPR compliant.</p><div class="ck-btns"><button class="btn btn-g btn-sm" onclick="sc(\'essential\')">Essential Only</button><button class="btn btn-p btn-sm" onclick="sc(\'all\')">Accept All</button></div>';document.body.appendChild(b);}
 function sc(lv){State.setCookies(lv);const b=document.getElementById('ckbanner');if(b)b.remove();}
-function sw(t){['c','a'].forEach(x=>{document.getElementById('tab-'+x).classList.toggle('on',x===t);document.getElementById('f'+x).style.display=x===t?'block':'none';});}
+function sw(t){['c','r','a'].forEach(x=>{const tab=document.getElementById('tab-'+x),panel=document.getElementById('f'+x);if(tab)tab.classList.toggle('on',x===t);if(panel)panel.style.display=x===t?'block':'none';});}
 function tp(id,ic){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';ic.textContent=el.type==='password'?'◉':'◎';}
-function doLogin(){const e=document.getElementById('le').value.trim(),p=document.getElementById('lp').value,u=State.login(e,p);document.getElementById('lerr').style.display=u?'none':'block';if(u)window.location.href='shop.html';}
+
+async function doLogin(){
+  const e=document.getElementById('le').value.trim(),p=document.getElementById('lp').value;
+  const btn=document.getElementById('lbtn');
+  btn.disabled=true;btn.textContent='Signing in...';
+  try{
+    const res=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
+    const data=await res.json();
+    if(!res.ok){document.getElementById('lerr').style.display='block';document.getElementById('lerr').textContent=data.error||'Incorrect email or password.';}
+    else{State.setUser({...data.user,token:data.token});window.location.href='shop.html';}
+  }catch{document.getElementById('lerr').style.display='block';document.getElementById('lerr').textContent='Could not connect. Try again.';}
+  btn.disabled=false;btn.textContent='Sign In';
+}
+
+async function doRegister(){
+  const n=document.getElementById('rn').value.trim(),e=document.getElementById('re').value.trim(),p=document.getElementById('rp').value;
+  const err=document.getElementById('rerr'),btn=document.getElementById('rbtn');
+  err.style.display='none';
+  if(!n||!e||!p){err.textContent='All fields are required.';err.style.display='block';return;}
+  if(p.length<8){err.textContent='Password must be at least 8 characters.';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='Creating account...';
+  try{
+    const res=await fetch(API+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:e,password:p})});
+    const data=await res.json();
+    if(!res.ok){err.textContent=data.error||'Registration failed.';err.style.display='block';}
+    else{State.setUser({...data.user,token:data.token});window.location.href='shop.html';}
+  }catch{err.textContent='Could not connect. Try again.';err.style.display='block';}
+  btn.disabled=false;btn.textContent='Create Account';
+}
+
 function doGuest(){State.guestLogin();window.location.href='shop.html';}
-function doAdmin(){const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value,u=State.login(e,p),ok=u&&u.role==='admin';document.getElementById('aerr').style.display=ok?'none':'block';if(ok)window.location.href='admin/stock.html';}
+
+function doAdmin(){
+  const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value,u=State.login(e,p),ok=u&&u.role==='admin';
+  document.getElementById('aerr').style.display=ok?'none':'block';
+  if(ok)window.location.href='admin/stock.html';
+}
+
 const LD={'privacy':'<h4>Who We Are</h4><p>ShopEase Ltd, Northern Ireland. UK GDPR compliant.</p><h4>What We Collect</h4><p>Name, email, address, phone, orders. Card data never stored on our servers.</p><h4>Your Rights</h4><p>Access, rectification, erasure, portability (UK GDPR). Email privacy@shopease.com.</p>','terms':'<h4>Orders</h4><p>Subject to availability. Confirmation email on placement.</p><h4>Pricing</h4><p>GBP inc. 20% VAT. Delivery at checkout.</p><h4>Returns</h4><p>30 days (Consumer Rights Act 2015). Governing law: Northern Ireland.</p>','cookies':'<h4>Essential</h4><p>Session, cart, auth. Always active.</p><h4>Analytics</h4><p>Anonymised usage data.</p><h4>Marketing</h4><p>Requires explicit consent (UK GDPR Art.7).</p>'};
 function showL(n){const c=LD[n];if(!c)return;const ov=document.createElement('div');ov.className='mov';ov.innerHTML='<div class="modal" onclick="event.stopPropagation()"><div class="mhdr"><h3>'+({privacy:'Privacy Policy',terms:'Terms & Conditions',cookies:'Cookie Policy'}[n]||n)+'</h3><button class="mclose" onclick="this.closest(\'.mov\').remove()">&#x2715;</button></div><div class="mbody">'+c+'</div><div class="mfoot"><button class="btn btn-d btn-sm" onclick="this.closest(\'.mov\').remove()">Close</button></div></div>';ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});document.body.appendChild(ov);}
 </script>
