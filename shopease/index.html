@@ -107,10 +107,17 @@ async function doRegister(){
 
 function doGuest(){State.guestLogin();window.location.href='shop.html';}
 
-function doAdmin(){
-  const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value,u=State.login(e,p),ok=u&&u.role==='admin';
-  document.getElementById('aerr').style.display=ok?'none':'block';
-  if(ok)window.location.href='admin/stock.html';
+async function doAdmin(){
+  const e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value;
+  const err=document.getElementById('aerr'),btn=document.getElementById('abtn');
+  btn.disabled=true;btn.textContent='Signing in...';
+  try{
+    const res=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
+    const data=await res.json();
+    if(!res.ok||data.user?.role!=='admin'){err.textContent='Invalid admin credentials.';err.style.display='block';}
+    else{State.setUser({...data.user,token:data.token});window.location.href='admin/stock.html';}
+  }catch{err.textContent='Could not connect. Try again.';err.style.display='block';}
+  btn.disabled=false;btn.textContent='Sign In to Console';
 }
 
 const LD={'privacy':'<h4>Who We Are</h4><p>ShopEase Ltd, Northern Ireland. UK GDPR compliant.</p><h4>What We Collect</h4><p>Name, email, address, phone, orders. Card data never stored on our servers.</p><h4>Your Rights</h4><p>Access, rectification, erasure, portability (UK GDPR). Email privacy@shopease.com.</p>','terms':'<h4>Orders</h4><p>Subject to availability. Confirmation email on placement.</p><h4>Pricing</h4><p>GBP inc. 20% VAT. Delivery at checkout.</p><h4>Returns</h4><p>30 days (Consumer Rights Act 2015). Governing law: Northern Ireland.</p>','cookies':'<h4>Essential</h4><p>Session, cart, auth. Always active.</p><h4>Analytics</h4><p>Anonymised usage data.</p><h4>Marketing</h4><p>Requires explicit consent (UK GDPR Art.7).</p>'};
