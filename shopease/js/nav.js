@@ -46,7 +46,9 @@ const Nav=(()=>{
   function injectSidebar(page,user){
     let sb=document.getElementById('sidebar');
     if(!sb){sb=document.createElement('div');sb.id='sidebar';}
-    const isAdmin=user&&user.role==='admin',links=isAdmin?AN:CN;
+    const isAdmin=user&&user.role==='admin',adm=State.isAdminArea();
+    const rawLinks=isAdmin?AN:CN;
+    const links=(!isAdmin||adm)?rawLinks:rawLinks.map(sec=>({...sec,l:sec.l.map(l=>({...l,h:l.h.startsWith('../')?l.h.slice(3):'admin/'+l.h}))}));
     sb.innerHTML=links.map(sec=>'<div class="sb-grp">'+sec.g+'</div>'+sec.l.map(l=>{const bv=l.bdg==='cart'?State.cartCount():0;return'<a href="'+l.h+'" class="sb-a '+(page===l.id?'on':'')+'"><span class="sb-ic">'+l.ic+'</span>'+l.lb+(bv>0?'<span class="sb-bdg">'+bv+'</span>':'')+'</a>';}).join('')).join('')+'<div class="sb-div"></div><button class="sb-a sb-out" onclick="State.logout()"><span class="sb-ic">&#x23FB;</span>Sign Out</button>';
     const wrap=document.querySelector('.wrap');
     if(wrap)wrap.prepend(sb);else document.body.insertBefore(sb,document.querySelector('.main'));
