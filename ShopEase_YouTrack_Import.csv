@@ -1,0 +1,111 @@
+ID,Summary,Type,Priority,State,Description
+B-001,SyntaxError in nav.js - unescaped single quotes in cookies modal onclick handlers,Bug,High,Done,"File: shopease/js/nav.js - Line 10
+
+Description of Issue:
+A SyntaxError: Unexpected identifier 'essential' was thrown in nav.js at line 10. Unescaped single quotes inside single-quoted JavaScript strings in the cookies modal onclick handlers caused the entire script to fail at parse time. The attributes onclick=""Nav.setCookies('essential')"" and onclick=""Nav.setCookies('all')"" were malformed.
+
+Fix:
+Escaped the inner single quotes in both onclick handlers so they read Nav.setCookies(\'essential\') and Nav.setCookies(\'all\') respectively.
+
+Test of Fix:
+Open the cookies consent modal and click both Essential Only and Accept All buttons. Verify each button triggers the correct Nav.setCookies() call without throwing a console error and that cookie preferences are saved as expected."
+B-002,SyntaxError in admin/stock.html - broken string concatenation in emoji picker onclick,Bug,High,Done,"File: shopease/admin/stock.html - Line 50
+
+Description of Issue:
+A SyntaxError: missing ) after argument list was thrown in admin/stock.html at line 50. Broken string concatenation in the emoji picker onclick handler — the expression pe(\'+e+ was treating +e+ as literal string content instead of interpolating the variable, preventing the admin stock page from loading.
+
+Fix:
+Corrected concatenation to pe(\''+e+'\'  so the variable e is properly interpolated outside the quoted string boundaries.
+
+Test of Fix:
+Open the admin stock management page and interact with the emoji picker when adding or editing a product. Verify the correct emoji value is passed to pe() with no console errors."
+B-003,SyntaxError in shop.html - broken string concatenation in wishlist button onclick,Bug,High,Done,"File: shopease/shop.html - Line 55
+
+Description of Issue:
+A SyntaxError: missing ) after argument list was thrown in shop.html at line 55. Broken string concatenation \'+p.name+ in the wishlist button onclick handler was treating p.name as literal string content rather than as a variable, causing the shop catalogue page to fail to render.
+
+Fix:
+Corrected the concatenation to \''+p.name+ so p.name is concatenated as a variable outside the string. Applied using a Python byte-level replacement due to backslash escaping limitations in the editor.
+
+Test of Fix:
+Navigate to the shop page and click the wishlist button on any product. Verify the correct product name is passed and the item is added to the wishlist with no console errors."
+B-004,SyntaxError in recommendations.html - broken string concatenation in wishlist onclick,Bug,High,Done,"File: shopease/recommendations.html - Line 29
+
+Description of Issue:
+Same broken string concatenation pattern as B-003 present in recommendations.html at line 29 in the wishlist onclick handler. \'+p.name+ was incorrectly treated as literal string content, causing the recommendations page to throw a SyntaxError and fail to render.
+
+Fix:
+Applied the same fix as B-003 — corrected \'+p.name+ to \''+p.name+ using a Python byte-level replacement.
+
+Test of Fix:
+Navigate to the recommendations page and click the wishlist button on any recommended product. Verify the correct product name is passed to the handler and that no console errors are thrown."
+B-005,SyntaxError in wishlist.html - broken string concatenation in rm() onclick handler,Bug,High,Done,"File: shopease/wishlist.html - Line 28
+
+Description of Issue:
+Same broken string concatenation pattern \'+p.name+ was present in wishlist.html inside the rm() onclick handler. This caused a SyntaxError that prevented the wishlist page from rendering and items from being removed.
+
+Fix:
+Corrected \'+p.name+ to \''+p.name+ using Python byte-level replacement, consistent with the fixes applied in B-003 and B-004.
+
+Test of Fix:
+Navigate to the wishlist page, ensure items are present, then click the remove button on an item. Verify the item is correctly removed and p.name is passed accurately to rm() with no console errors."
+B-006,SyntaxError in cart.html - broken string concatenation in setDel() onclick handler,Bug,High,Done,"File: shopease/cart.html - Line 33
+
+Description of Issue:
+Same broken string concatenation pattern in cart.html inside the setDel() onclick handler where \'+k+ was being treated as literal string content rather than interpolating the variable k. This caused a SyntaxError preventing the cart page from rendering.
+
+Fix:
+Corrected \'+k+ to \''+k+ using Python byte-level replacement ensuring k is properly passed as a variable to setDel().
+
+Test of Fix:
+Navigate to the cart page with items present and select a delivery option (Standard Express Free). Verify setDel() is called with the correct key value and the order summary updates accordingly with no console errors."
+B-007,shop.html add() function not calling filt() after adding item to cart,Bug,Medium,Done,"File: shopease/shop.html - add() function
+
+Description of Issue:
+In shop.html the add() function was not calling filt() after adding an item to the cart. As a result the product grid was not re-rendering following an add action leaving the UI in a stale state — stock levels and button states were not updating to reflect the cart change.
+
+Fix:
+Added a call to filt() immediately after the Nav.toast() call within the add() function ensuring the product grid re-renders correctly after every add-to-cart action.
+
+Test of Fix:
+Navigate to the shop page and add any product to the cart. Verify the product grid re-renders immediately after the toast notification appears and that stock-related UI state updates correctly."
+B-008,recommendations.html add() function not calling render() after adding item to cart,Bug,Medium,Done,"File: shopease/recommendations.html - add() function
+
+Description of Issue:
+In recommendations.html the add() function was not calling render() after adding an item to the cart. This meant the recommendations list was not refreshing after an item was added leaving the page displaying stale data and inaccurate stock states.
+
+Fix:
+Added a call to render() immediately after the Nav.toast() call within the add() function so the recommendations list updates correctly after every add-to-cart action.
+
+Test of Fix:
+Navigate to the recommendations page and add a recommended product to the cart. Verify the recommendations list re-renders after the toast notification and that stock levels and button states reflect the updated state accurately."
+B-009,All pages rendering blank - root cause nav.js parse failure,Bug,High,Done,"Files Affected: shop.html wishlist.html cart.html recommendations.html
+
+Description of Issue:
+All pages were rendering completely blank — no navigation no products no content. The root cause was the SyntaxError in nav.js at line 10 (B-001). Because nav.js failed at parse time the entire script was never executed meaning the Nav object was never defined. Every page that calls Nav.init() therefore failed silently and rendered nothing.
+
+Fix:
+Resolved entirely by the fix applied in B-001. Correcting the syntax error in nav.js allowed the script to parse and execute successfully making the Nav object available to all dependent pages.
+
+Test of Fix:
+Load each affected page (shop wishlist cart recommendations) in the browser after clearing localStorage. Verify all pages render their navigation content and products correctly with no blank page or Nav is not defined errors in the console."
+B-010,Login page exposing demo credentials publicly,Bug,Medium,Done,"File: shopease/index.html
+
+Description of Issue:
+The login page was publicly exposing demo credentials to all visitors. Two demo-box div elements were visible — one on the Customer tab displaying user@shopease.com / password123 and one on the Admin tab displaying admin@shopease.com / admin2025. Both sets of credentials were also pre-filled into the input fields meaning they were visible in plain text to any visitor.
+
+Fix:
+Removed both demo-box div elements from the page markup entirely. Cleared all pre-filled value attributes from the email and password input fields so they render blank by default. Added placeholder text instead.
+
+Test of Fix:
+Navigate to the login page on both the Customer and Admin tabs. Verify no credentials are visible anywhere on the page that all input fields are empty on load and that no demo-box elements are present in the page source."
+B-011,SHO-12 Product image upload and edit functionality,Feature,Medium,Done,"Files: shopease/admin/stock.html shopease/js/state.js shopease/css/components.css shopease/shop.html shopease/wishlist.html shopease/recommendations.html shopease/cart.html shopease-api/src/functions/upload-image.js
+
+Description of Issue:
+Products were display-only with emoji icons. There was no way to upload real product images or edit existing product details. The Add Product modal was add-only with no edit capability. Product images could not be stored on the cloud.
+
+Fix:
+Added an Edit button to every inventory row in stock.html that re-opens the product modal pre-filled with existing values. Extended the modal with an image upload section — admin selects a JPG/PNG/WebP file (max 2 MB) which is base64-encoded in the browser and uploaded to Azure Blob Storage via a new upload-image Azure Function secured with JWT admin auth. The returned public URL is stored on the product object. All customer-facing pages (shop catalogue wishlist recommendations cart) updated to render the real product image when present falling back to the emoji icon when no image is set. A .pimg CSS class added to components.css for consistent image display. state.js updated so cart items carry the image URL when an image exists.
+
+Test of Fix:
+Log in as admin and open Inventory. Click Edit on any product — verify the modal opens pre-filled with correct name price stock category emoji and image. Upload a product image and verify it appears in the preview and uploads to Azure Blob with a toast confirmation. Save changes and verify the product image appears in the inventory table thumbnail. Navigate to the shop catalogue and verify the product card shows the real image. Verify emoji fallback still renders for products without an image."

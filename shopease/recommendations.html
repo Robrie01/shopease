@@ -12,7 +12,6 @@
 <div class="wrap">
 <div id="sidebar"></div>
 <main class="main">
-  <div class="page-title">Recommendations</div>
   <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
     <div style="font-size:1.3rem;opacity:.65;">◈</div>
     <div><div style="font-size:.87rem;font-weight:600;margin-bottom:2px;">Personalised for you</div><div style="font-size:.77rem;color:var(--t2);">Our AI analyses your browsing and purchase history to surface products you are likely to love.</div></div>
@@ -25,8 +24,9 @@
 <script>
 Nav.init({page:'recs'});
 function getRecs(){const prods=State.getProds(),rv=State.getRecent(),wl=State.getWL(),cs={};rv.forEach((id,i)=>{const p=prods.find(x=>x.id===id);if(p)cs[p.cat]=(cs[p.cat]||0)+(8-i);});wl.forEach(id=>{const p=prods.find(x=>x.id===id);if(p)cs[p.cat]=(cs[p.cat]||0)+5;});return[...prods].map(p=>({...p,score:(cs[p.cat]||0)+p.stars*2+(p.stock>0?3:0)})).sort((a,b)=>b.score-a.score).slice(0,8);}
+function pimg(p){return p.image?'<img src="'+p.image+'" class="pimg" alt="'+p.name+'">':'<span class="pemo">'+p.emoji+'</span>';}
 function stag(s){if(s===0)return'<span class="stag sout">Out of stock</span>';if(s<=5)return'<span class="stag slow">Only '+s+' left</span>';return'<span class="stag sin">In stock</span>';}
-function render(){const list=getRecs(),wl=State.getWL();document.getElementById('rg').innerHTML=list.map(p=>'<div class="pcard"><button class="wlbtn'+(wl.includes(p.id)?' on':'')+'" onclick="twl('+p.id+',\''+p.name+'\')">'+(wl.includes(p.id)?'♥':'♡')+'</button><span class="pemo">'+p.emoji+'</span><div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div><div style="font-size:.68rem;color:var(--accent);margin-bottom:6px;">Score: '+p.score.toFixed(0)+'</div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('');}
+function render(){const list=getRecs(),wl=State.getWL();document.getElementById('rg').innerHTML=list.map(p=>'<div class="pcard"><button class="wlbtn'+(wl.includes(p.id)?' on':'')+'" onclick="twl('+p.id+',\''+p.name+'\')">'+(wl.includes(p.id)?'♥':'♡')+'</button>'+pimg(p)+'<div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div><div style="font-size:.68rem;color:var(--accent);margin-bottom:6px;">Score: '+p.score.toFixed(0)+'</div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('');}
 function twl(id,name){State.toggleWL(id,name);Nav.toast(State.getWL().includes(id)?'Added to wishlist':'Removed','i');render();}
 function add(id){const p=State.getProds().find(x=>x.id===id);if(!p)return;State.addRecent(id);const ok=State.addToCart(p);Nav.toast(ok?p.emoji+' Added to cart':'No stock',ok?'s':'e');render();}
 render();

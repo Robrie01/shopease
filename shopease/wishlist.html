@@ -20,12 +20,13 @@
 <script src="js/nav.js"></script>
 <script>
 Nav.init({page:'wishlist'});
+function pimg(p){return p.image?'<img src="'+p.image+'" class="pimg" alt="'+p.name+'">':'<span class="pemo">'+p.emoji+'</span>';}
 function stag(s){if(s===0)return'<span class="stag sout">Out of stock</span>';if(s<=5)return'<span class="stag slow">Only '+s+' left</span>';return'<span class="stag sin">In stock</span>';}
 function render(){
   const wl=State.getWL(),prods=State.getProds(),items=wl.map(id=>prods.find(p=>p.id===id)).filter(Boolean);
   const el=document.getElementById('wc');
   if(!items.length){el.innerHTML='<div class="empty"><div class="ei">♡</div><p>Your wishlist is empty.</p><a href="shop.html" class="btn btn-p">Browse products</a></div>';return;}
-  el.innerHTML='<div class="pgrid">'+items.map(p=>'<div class="pcard"><button class="wlbtn on" onclick="rm('+p.id+',\''+p.name+'\')" title="Remove">♥</button><span class="pemo">'+p.emoji+'</span><div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('')+'</div>';
+  el.innerHTML='<div class="pgrid">'+items.map(p=>'<div class="pcard"><button class="wlbtn on" onclick="rm('+p.id+',\''+p.name+'\')" title="Remove">♥</button>'+pimg(p)+'<div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('')+'</div>';
 }
 function rm(id,name){State.toggleWL(id,name);Nav.toast('Removed from wishlist','i');render();}
 function add(id){const p=State.getProds().find(x=>x.id===id);if(!p)return;const ok=State.addToCart(p);Nav.toast(ok?p.emoji+' Added to cart':'No stock','ok'?'s':'e');}

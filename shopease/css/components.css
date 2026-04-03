@@ -107,3 +107,4 @@ select option{background:var(--card);}
 .epick{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-bottom:11px;}
 .eo{font-size:1.15rem;padding:5px;border:2px solid transparent;border-radius:7px;cursor:pointer;text-align:center;transition:all .13s;}
 .eo:hover,.eo.sel{border-color:var(--accent);background:var(--adim);}
+.pimg{width:100%;height:110px;object-fit:contain;border-radius:var(--r2);margin-bottom:8px;background:rgba(255,255,255,.04);display:block;}

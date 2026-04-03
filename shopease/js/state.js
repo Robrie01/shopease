@@ -57,7 +57,7 @@ const State=(()=>{
     if(pp&&pp.stock===0)return false;
     const ex=cart.find(i=>i.id===p.id);
     if(ex){if(pp&&ex.qty>=pp.stock)return false;ex.qty+=qty;}
-    else cart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,cat:p.cat,qty});
+    else{const item={id:p.id,name:p.name,emoji:p.emoji,price:p.price,cat:p.cat,qty};if(p.image)item.image=p.image;cart.push(item);}
     setCart(cart);track('add_to_cart',{name:p.name,price:p.price});return true;
   }
   function clearCart(){s(K.cart,[]);}

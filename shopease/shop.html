@@ -45,6 +45,7 @@
 <script src="js/nav.js"></script>
 <script>
 Nav.init({page:'shop'});
+function pimg(p){return p.image?'<img src="'+p.image+'" class="pimg" alt="'+p.name+'">':'<span class="pemo">'+p.emoji+'</span>';}
 function stars(n){return '<span style="color:var(--yellow);">'+'★'.repeat(Math.floor(n))+'☆'.repeat(5-Math.floor(n))+'</span> <span style="color:var(--t3);font-size:.67rem;">'+n+'</span>';}
 function stag(s){if(s===0)return'<span class="stag sout">Out of stock</span>';if(s<=5)return'<span class="stag slow">Only '+s+' left</span>';return'<span class="stag sin">In stock</span>';}
 function render(list){
@@ -52,7 +53,7 @@ function render(list){
   document.getElementById('rinfo').textContent=list.length+' product'+(list.length!==1?'s':'')+' found';
   const g=document.getElementById('pgrid');
   if(!list.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">◫</div><p>No products found. <a onclick="clr()">Clear filters</a></p></div>';return;}
-  g.innerHTML=list.map(p=>'<div class="pcard"><button class="wlbtn'+(wl.includes(p.id)?' on':'')+'" onclick="twl('+p.id+',\''+p.name+'\')" title="Wishlist">'+(wl.includes(p.id)?'♥':'♡')+'</button><span class="pemo">'+p.emoji+'</span><div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div><div class="pstars">'+stars(p.stars)+' <span style="color:var(--t3);font-size:.67rem;">'+p.reviews.toLocaleString()+' reviews</span></div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('');
+  g.innerHTML=list.map(p=>'<div class="pcard"><button class="wlbtn'+(wl.includes(p.id)?' on':'')+'" onclick="twl('+p.id+',\''+p.name+'\')" title="Wishlist">'+(wl.includes(p.id)?'♥':'♡')+'</button>'+pimg(p)+'<div class="pname">'+p.name+'</div><div class="pcat">'+p.cat+'</div><div class="pstars">'+stars(p.stars)+' <span style="color:var(--t3);font-size:.67rem;">'+p.reviews.toLocaleString()+' reviews</span></div>'+stag(p.stock)+'<div class="pprice">£'+p.price.toFixed(2)+' <span class="vat">inc. VAT</span></div><button class="btn btn-d btn-full btn-sm" onclick="add('+p.id+')" '+(p.stock===0?'disabled':'')+'>'+(p.stock===0?'Out of Stock':'+ Add to Cart')+'</button></div>').join('');
 }
 function filt(){
   const q=document.getElementById('srch').value.toLowerCase(),cat=document.getElementById('cat').value,srt=document.getElementById('srt').value;
