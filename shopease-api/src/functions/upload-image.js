@@ -6,19 +6,18 @@ app.http('upload-image', {
   methods: ['POST'],
   authLevel: 'anonymous',
   handler: async (request, context) => {
-    // Auth — admin JWT required
-    const auth = (request.headers.get('authorization') || '').replace('Bearer ', '');
-    if (!auth) return { status: 401, jsonBody: { error: 'Unauthorised' } };
+    let body;
+    try { body = await request.json(); } catch { body = {}; }
+    const { token, filename, contentType, data } = body;
+
+    // Auth — admin JWT required (passed in body to avoid CORS preflight)
+    if (!token) return { status: 401, jsonBody: { error: 'Unauthorised' } };
     try {
-      const decoded = jwt.verify(auth, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       if (decoded.role !== 'admin') return { status: 403, jsonBody: { error: 'Admin only' } };
     } catch {
       return { status: 401, jsonBody: { error: 'Unauthorised' } };
     }
-
-    let body;
-    try { body = await request.json(); } catch { body = {}; }
-    const { filename, contentType, data } = body;
 
     if (!filename || !contentType || !data) {
       return { status: 400, jsonBody: { error: 'filename, contentType and data are required' } };

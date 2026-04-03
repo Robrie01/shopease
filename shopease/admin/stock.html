@@ -171,8 +171,8 @@ async function previewImg(input){
     try{
       const res=await fetch(API+'/upload-image',{
         method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+(user.token||'')},
-        body:JSON.stringify({filename:file.name,contentType:file.type,data:base64})
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token:user.token||'',filename:file.name,contentType:file.type,data:base64})
       });
       const d=await res.json();
       if(res.ok){selImg=d.url;Nav.toast('Image uploaded','s');}
