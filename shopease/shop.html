@@ -68,7 +68,7 @@ function filt(){
 function clr(){document.getElementById('srch').value='';document.getElementById('cat').value='';document.getElementById('srt').value='';filt();}
 function add(id){const p=State.getProds().find(x=>x.id===id);if(!p)return;State.addRecent(id);const ok=State.addToCart(p);Nav.toast(ok?p.emoji+' '+p.name+' added to cart':'No more stock available',ok?'s':'e');filt();renderRV();}
 function twl(id,name){State.toggleWL(id,name);Nav.toast(State.getWL().includes(id)?'Added to wishlist':'Removed from wishlist','i');filt();}
-function renderRV(){const rv=State.getRecent();const sec=document.getElementById('rv-sec');if(!rv.length){sec.style.display='none';return;}sec.style.display='block';document.getElementById('rvstrip').innerHTML=rv.map(id=>{const p=State.getProds().find(x=>x.id===id);if(!p)return'';return'<div class="rvcard" onclick="add('+p.id+')"><div class="rve">'+p.emoji+'</div><p>'+p.name+'</p><div class="rvp">£'+p.price.toFixed(2)+'</div></div>';}).join('');}
+function renderRV(){const rv=State.getRecent();const sec=document.getElementById('rv-sec');if(!rv.length){sec.style.display='none';return;}sec.style.display='block';document.getElementById('rvstrip').innerHTML=rv.map(id=>{const p=State.getProds().find(x=>x.id===id);if(!p)return'';return'<div class="rvcard" onclick="add('+p.id+')">'+(p.image?'<img src="'+p.image+'" style="width:48px;height:48px;object-fit:contain;margin-bottom:3px;display:block;margin-left:auto;margin-right:auto;" alt="'+p.name+'">':'<div class="rve">'+p.emoji+'</div>')+'<p>'+p.name+'</p><div class="rvp">£'+p.price.toFixed(2)+'</div></div>';}).join('');}
 filt();renderRV();
 </script>
 </body>
