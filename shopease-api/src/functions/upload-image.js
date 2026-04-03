@@ -17,8 +17,22 @@ function hmac(key, str) {
 // Build Shared Key auth header for Azure Blob
 function sharedKeyHeader(account, key, method, containerName, blobName, contentType, contentLength, date) {
   const canonRes = `/${account}/${containerName}/${blobName}`;
+  // Order: VERB, Content-Encoding, Content-Language, Content-Length, Content-MD5, Content-Type,
+  //        Date, If-Modified-Since, If-Match, If-None-Match, If-Unmodified-Since, Range,
+  //        CanonicalizedHeaders, CanonicalizedResource
   const toSign = [
-    method, '', '', contentType, '', '', '', '', '', '', '', '',
+    method,
+    '',               // Content-Encoding
+    '',               // Content-Language
+    String(contentLength), // Content-Length
+    '',               // Content-MD5
+    contentType,      // Content-Type
+    '',               // Date (empty — using x-ms-date instead)
+    '',               // If-Modified-Since
+    '',               // If-Match
+    '',               // If-None-Match
+    '',               // If-Unmodified-Since
+    '',               // Range
     `x-ms-blob-type:BlockBlob`,
     `x-ms-date:${date}`,
     `x-ms-version:2020-04-08`,
