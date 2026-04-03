@@ -176,8 +176,8 @@ async function previewImg(input){
       });
       const d=await res.json();
       if(res.ok){selImg=d.url;Nav.toast('Image uploaded','s');}
-      else{Nav.toast('Upload failed: '+d.error,'e');clearImg();}
-    }catch{Nav.toast('Upload failed — check connection','e');clearImg();}
+      else{Nav.toast('Upload failed: '+(d.error||res.status),'e');clearImg();}
+    }catch(e){Nav.toast('Upload failed: '+e.message,'e');clearImg();}
     document.getElementById('img-uploading').style.display='none';
   };
   reader.readAsDataURL(file);

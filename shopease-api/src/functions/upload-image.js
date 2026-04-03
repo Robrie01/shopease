@@ -91,7 +91,7 @@ app.http('upload-image', {
   authLevel: 'anonymous',
   handler: async (request, context) => {
     let body;
-    try { body = await request.json(); } catch { body = {}; }
+    try { body = await request.json(); } catch (e) { return { status: 400, jsonBody: { error: 'Invalid JSON: ' + e.message } }; }
     const { token, filename, contentType, data } = body;
 
     if (!token) return { status: 401, jsonBody: { error: 'Unauthorised' } };
@@ -106,16 +106,24 @@ app.http('upload-image', {
       return { status: 400, jsonBody: { error: 'filename, contentType and data are required' } };
     }
 
-    const { account, key } = parseConn(process.env.AzureWebJobsStorage);
-    const container = 'product-images';
-    const ext = (filename.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const blobName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
-    const buffer = Buffer.from(data, 'base64');
+    try {
+      const connStr = process.env.AzureWebJobsStorage;
+      if (!connStr) return { status: 500, jsonBody: { error: 'AzureWebJobsStorage not set' } };
+      const { account, key } = parseConn(connStr);
+      if (!account || !key) return { status: 500, jsonBody: { error: 'Could not parse storage connection string' } };
 
-    await createContainer(account, key, container);
-    await uploadBlob(account, key, container, blobName, buffer, contentType);
+      const container = 'product-images';
+      const ext = (filename.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const blobName = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+      const buffer = Buffer.from(data, 'base64');
 
-    const url = `https://${account}.blob.core.windows.net/${container}/${blobName}`;
-    return { status: 200, jsonBody: { url } };
+      await createContainer(account, key, container);
+      await uploadBlob(account, key, container, blobName, buffer, contentType);
+
+      const url = `https://${account}.blob.core.windows.net/${container}/${blobName}`;
+      return { status: 200, jsonBody: { url } };
+    } catch (err) {
+      return { status: 500, jsonBody: { error: err.message || 'Upload failed' } };
+    }
   }
 });
