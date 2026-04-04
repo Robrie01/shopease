@@ -62,7 +62,8 @@
 <script src="../js/nav.js"></script>
 <script>
 const API='https://shopease-api-bjdvcybfd9aga0h6.canadacentral-01.azurewebsites.net/api';
-Nav.init({page:'stock',adminOnly:true});
+const _u=Nav.init({page:'stock',adminOnly:true});
+State.syncProds().then(render);
 
 const EMOJIS='🎧👟☕🧘💻💧💡🎒⌚🏋🕯🕶📱🖥⌨🖱📷🎮🎵📚🧴👜👒🌂🏀⚽🎸🍕🍷🧃🌿🧸🎁💎🪴🕹🎨'.split('');
 let selE='📦', selImg=null, editMode=false, editId=null;
@@ -91,6 +92,7 @@ function updS(id,val){
   if(!p)return;
   p.stock=Math.max(0,parseInt(val)||0);
   State.setProds(prods);render();
+  State.pushProds(_u.token);
   Nav.toast('Stock updated: '+p.name,'s');
 }
 
@@ -99,6 +101,7 @@ function rmP(id){
   if(!confirm('Remove "'+p.name+'" from catalogue?'))return;
   State.setProds(State.getProds().filter(x=>x.id!==id));
   State.setCart(State.getCart().filter(x=>x.id!==id));
+  State.pushProds(_u.token);
   render();Nav.toast(p.emoji+' '+p.name+' removed','i');
 }
 
@@ -195,11 +198,11 @@ function saveP(){
     if(!p)return;
     p.name=name;p.price=price;p.stock=stock;p.cat=cat;p.emoji=selE;
     if(selImg)p.image=selImg;else delete p.image;
-    State.setProds(prods);closeAdd();render();Nav.toast(name+' updated','s');
+    State.setProds(prods);State.pushProds(_u.token);closeAdd();render();Nav.toast(name+' updated','s');
   } else {
     const newP={id:Math.max(...prods.map(p=>p.id),200)+1,name,emoji:selE,price,cat,stars:4.0,reviews:0,stock};
     if(selImg)newP.image=selImg;
-    prods.push(newP);State.setProds(prods);closeAdd();render();Nav.toast(selE+' '+name+' added!','s');
+    prods.push(newP);State.setProds(prods);State.pushProds(_u.token);closeAdd();render();Nav.toast(selE+' '+name+' added!','s');
   }
 }
 

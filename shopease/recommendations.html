@@ -23,6 +23,7 @@
 <script src="js/nav.js"></script>
 <script>
 Nav.init({page:'recs'});
+State.syncProds().then(render);
 function getRecs(){const prods=State.getProds(),rv=State.getRecent(),wl=State.getWL(),cs={};rv.forEach((id,i)=>{const p=prods.find(x=>x.id===id);if(p)cs[p.cat]=(cs[p.cat]||0)+(8-i);});wl.forEach(id=>{const p=prods.find(x=>x.id===id);if(p)cs[p.cat]=(cs[p.cat]||0)+5;});return[...prods].map(p=>({...p,score:(cs[p.cat]||0)+p.stars*2+(p.stock>0?3:0)})).sort((a,b)=>b.score-a.score).slice(0,8);}
 function pimg(p){return p.image?'<img src="'+p.image+'" class="pimg" alt="'+p.name+'">':'<span class="pemo">'+p.emoji+'</span>';}
 function stag(s){if(s===0)return'<span class="stag sout">Out of stock</span>';if(s<=5)return'<span class="stag slow">Only '+s+' left</span>';return'<span class="stag sin">In stock</span>';}

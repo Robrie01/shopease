@@ -46,8 +46,11 @@ const State=(()=>{
   function changePw(email,old,nw){const a=ACCS.find(x=>x.email===email);if(!a||a.pw!==old)return false;a.pw=nw;return true;}
   function deleteAccount(email){const i=ACCS.findIndex(x=>x.email===email);if(i>-1)ACCS.splice(i,1);clearUser();s(K.cart,[]);s(K.wl,[]);s(K.recent,[]);}
   function downloadData(u){const d={account:u,cart:getCart(),wishlist:getWL(),recent:getRecent(),exported:new Date().toISOString(),note:'UK GDPR Art.15'};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='shopease-data.json';a.click();}
+  const API='https://shopease-api-bjdvcybfd9aga0h6.canadacentral-01.azurewebsites.net/api';
   function getProds(){return g(K.prods)||JSON.parse(JSON.stringify(DP));}
   function setProds(p){s(K.prods,p);}
+  async function syncProds(){try{const r=await fetch(API+'/get-products');const d=await r.json();if(d.products&&Array.isArray(d.products)){s(K.prods,d.products);}}catch{}}
+  async function pushProds(token){try{const prods=getProds();await fetch(API+'/save-products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,products:prods})});}catch{}}
   function getCart(){return g(K.cart,[]);}
   function setCart(c){s(K.cart,c);}
   function cartCount(){return getCart().reduce((a,i)=>a+i.qty,0);}
@@ -72,6 +75,6 @@ const State=(()=>{
   function track(type,data={}){const e=getEvts();e.push({type,data,ts:Date.now()});if(e.length>2000)e.splice(0,e.length-2000);s(K.evts,e);}
   function clearEvts(){s(K.evts,[]);}
   return{getUser,setUser,clearUser,requireAuth,login,guestLogin,logout,addAccount,changePw,deleteAccount,downloadData,
-    getProds,setProds,getCart,setCart,cartCount,cartSub,addToCart,clearCart,
+    getProds,setProds,syncProds,pushProds,getCart,setCart,cartCount,cartSub,addToCart,clearCart,
     getWL,setWL,toggleWL,getRecent,addRecent,getCookies,setCookies,getEvts,track,clearEvts,isAdminArea,idxPath};
 })();
