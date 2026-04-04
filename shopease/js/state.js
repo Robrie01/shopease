@@ -1,5 +1,5 @@
 const State=(()=>{
-  const K={user:'se_u',cart:'se_c',wl:'se_w',prods:'se_p',recent:'se_r',cookies:'se_ck',evts:'se_e'};
+  const K={user:'se_u',cart:'se_c',wl:'se_w',prods:'se_p',recent:'se_r',cookies:'se_ck',evts:'se_e',tickets:'se_t'};
   const ACCS=[
     {email:'user@shopease.com',pw:'password123',name:'Alex Thompson',role:'customer',mkt:true},
     {email:'admin@shopease.com',pw:'admin2025',name:'Admin',role:'admin',mkt:false}
@@ -74,7 +74,9 @@ const State=(()=>{
   function getEvts(){return g(K.evts,[]);}
   function track(type,data={}){const e=getEvts();e.push({type,data,ts:Date.now()});if(e.length>2000)e.splice(0,e.length-2000);s(K.evts,e);}
   function clearEvts(){s(K.evts,[]);}
+  function getTickets(email){const all=g(K.tickets,{});return email?all[email]||[]:[];}
+  function addTicket(ticket){const u=getUser();if(!u||!u.email||u.role==='guest')return;const all=g(K.tickets,{});if(!all[u.email])all[u.email]=[];all[u.email].unshift(ticket);s(K.tickets,all);}
   return{getUser,setUser,clearUser,requireAuth,login,guestLogin,logout,addAccount,changePw,deleteAccount,downloadData,
     getProds,setProds,syncProds,pushProds,getCart,setCart,cartCount,cartSub,addToCart,clearCart,
-    getWL,setWL,toggleWL,getRecent,addRecent,getCookies,setCookies,getEvts,track,clearEvts,isAdminArea,idxPath};
+    getWL,setWL,toggleWL,getRecent,addRecent,getCookies,setCookies,getEvts,track,clearEvts,getTickets,addTicket,isAdminArea,idxPath};
 })();

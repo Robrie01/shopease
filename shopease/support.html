@@ -25,6 +25,12 @@
 .sup-sec-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:14px;}
 @media(max-width:768px){.topic-grid{grid-template-columns:1fr 1fr;}.sup-sections{grid-template-columns:1fr;}}
 @media(max-width:480px){.topic-grid{grid-template-columns:1fr;}}
+.tkt-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:.83rem;}
+.tkt-row:last-child{border-bottom:none;}
+.tkt-id{font-weight:700;color:var(--accent);min-width:90px;}
+.tkt-desc{flex:1;color:var(--t2);padding:0 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tkt-date{font-size:.72rem;color:var(--t3);white-space:nowrap;}
+.tkt-status{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,.12);color:var(--green);white-space:nowrap;margin-left:10px;}
 </style>
 </head>
 <body>
@@ -115,14 +121,35 @@
         <div style="font-size:2rem;margin-bottom:10px;">💬</div>
         <div style="font-weight:700;font-size:.9rem;margin-bottom:6px;">Contact our support team</div>
         <p style="font-size:.78rem;color:var(--t2);margin-bottom:16px;line-height:1.6;">Our team is available Monday to Friday, 9am to 5pm GMT. We aim to respond within 24 hours.</p>
-        <button class="btn btn-p btn-full" onclick="Nav.toast('Contact page coming soon','i')">Contact Us</button>
+        <a href="contact.html" class="btn btn-p btn-full">Contact Us</a>
       </div>
     </div>
+  </div>
+
+  <div id="my-tickets" class="hidden" style="margin-top:32px;">
+    <div class="sup-sec-title">MY SUPPORT TICKETS</div>
+    <div class="card" style="padding:0 16px;" id="tkt-list"></div>
   </div>
 </main>
 </div>
 <script src="js/state.js"></script>
 <script src="js/nav.js"></script>
-<script>Nav.init({page:'support'});</script>
+<script>
+Nav.init({page:'support'});
+(function(){
+  const u=State.getUser();
+  if(!u||!u.email||u.role==='guest')return;
+  const tickets=State.getTickets(u.email);
+  if(!tickets.length)return;
+  document.getElementById('my-tickets').classList.remove('hidden');
+  const list=document.getElementById('tkt-list');
+  list.innerHTML=tickets.map(t=>{
+    const d=new Date(t.created);
+    const ds=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const desc=(t.description||'').length>60?(t.description||'').slice(0,60)+'...':t.description||'';
+    return '<div class="tkt-row"><span class="tkt-id">'+t.id+'</span><span class="tkt-desc">'+desc+'</span><span class="tkt-date">'+ds+'</span><span class="tkt-status">'+t.status+'</span></div>';
+  }).join('');
+})();
+</script>
 </body>
 </html>

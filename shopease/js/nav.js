@@ -38,7 +38,7 @@ const Nav=(()=>{
     {g:'Shop',l:[{h:'shop.html',ic:'▦',lb:'Catalogue',id:'shop'},{h:'recommendations.html',ic:'◈',lb:'Recommendations',id:'recs'},{h:'wishlist.html',ic:'♡',lb:'Wishlist',id:'wishlist'}]},
     {g:'Order',l:[{h:'cart.html',ic:'⊞',lb:'Cart',id:'cart',bdg:'cart'},{h:'checkout.html',ic:'≡',lb:'Checkout',id:'checkout'}]},
     {g:'Account',l:[{h:'settings.html',ic:'⚙',lb:'Settings',id:'settings'}]},
-    {g:'Help',l:[{h:'support.html',ic:'?',lb:'Support',id:'support'}]},
+    {g:'Help',l:[{h:'support.html',ic:'?',lb:'Support',id:'support'},{h:'contact.html',ic:'✉',lb:'Contact Us',id:'contact'}]},
   ];
   const AN=[
     {g:'Management',l:[{h:'stock.html',ic:'▦',lb:'Inventory',id:'stock'},{h:'analytics.html',ic:'◈',lb:'Analytics',id:'analytics'}]},
