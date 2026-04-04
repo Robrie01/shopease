@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase — Reviews</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+<style>
+.rev-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;gap:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.rev-hero-img{width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--adim);border-radius:var(--r2);flex-shrink:0;overflow:hidden;}
+.rev-hero-img img{width:100%;height:100%;object-fit:contain;}
+.rev-hero-name{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+.rev-hero-cat{font-size:.73rem;color:var(--t3);margin-bottom:6px;}
+.rev-hero-stars{display:flex;align-items:center;gap:7px;}
+.rev-hero-rating{font-size:1.3rem;color:var(--yellow);letter-spacing:1px;}
+.rev-hero-avg{font-size:.95rem;font-weight:700;color:var(--text);}
+.rev-hero-count{font-size:.75rem;color:var(--t3);}
+.write-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.write-title{font-size:.87rem;font-weight:700;margin-bottom:14px;}
+.star-pick{display:flex;gap:6px;margin-bottom:14px;}
+.star-pick span{font-size:1.6rem;cursor:pointer;color:var(--border);transition:color .1s;line-height:1;}
+.star-pick span.on{color:var(--yellow);}
+.rev-list{display:flex;flex-direction:column;gap:12px;}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.rev-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
+.rev-name{font-size:.83rem;font-weight:700;color:var(--text);}
+.rev-stars{color:var(--yellow);font-size:.85rem;letter-spacing:1px;}
+.rev-date{font-size:.72rem;color:var(--t3);}
+.rev-vp{font-size:.68rem;font-weight:700;color:var(--green);background:rgba(16,185,129,.1);padding:2px 8px;border-radius:20px;}
+.rev-ti{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:4px;}
+.rev-bo{font-size:.81rem;color:var(--t2);line-height:1.7;}
+.locked-msg{background:var(--adim);border:1px solid rgba(79,126,247,.15);border-radius:var(--r3);padding:14px 16px;font-size:.81rem;color:var(--t2);margin-bottom:20px;}
+.sec-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:12px;}
+.empty-rev{text-align:center;padding:30px;color:var(--t3);font-size:.83rem;}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div style="margin-bottom:16px;"><a href="shop.html" style="font-size:.78rem;color:var(--t2);text-decoration:none;">&#8592; Back to Catalogue</a></div>
+  <div id="hero"></div>
+  <div id="write-section"></div>
+  <div class="sec-label">CUSTOMER REVIEWS</div>
+  <div class="rev-list" id="rev-list"></div>
+</main>
+</div>
+<script src="js/state.js"></script>
+<script src="js/nav.js"></script>
+<script>
+const user = Nav.init({page:'shop'});
+const params = new URLSearchParams(window.location.search);
+const pid = parseInt(params.get('id'));
+const prods = State.getProds();
+const prod = prods.find(p => p.id === pid);
+
+if(!prod){
+  document.querySelector('.main').innerHTML = '<div style="text-align:center;padding:60px;color:var(--t3);"><p>Product not found.</p><a href="shop.html" class="btn btn-p btn-sm">Back to Shop</a></div>';
+} else {
+  // HERO
+  const imgHtml = prod.image
+    ? '<img src="'+prod.image+'" alt="'+prod.name+'">'
+    : prod.emoji;
+  const reviews = State.getReviews(pid);
+  const avg = reviews.length ? (reviews.reduce((a,r)=>a+(r.rt||r.rating||0),0)/reviews.length).toFixed(1) : prod.stars.toFixed(1);
+  const fullStars = Math.floor(avg);
+  const starStr = '★'.repeat(fullStars)+'☆'.repeat(5-fullStars);
+  document.getElementById('hero').innerHTML =
+    '<div class="rev-hero"><div class="rev-hero-img">'+imgHtml+'</div><div><div class="rev-hero-name">'+prod.name+'</div><div class="rev-hero-cat">'+prod.cat+'</div><div class="rev-hero-stars"><span class="rev-hero-rating">'+starStr+'</span><span class="rev-hero-avg">'+avg+'</span><span class="rev-hero-count">'+reviews.length+' review'+(reviews.length!==1?'s':'')+'</span></div></div></div>';
+
+  // CHECK PURCHASE ELIGIBILITY
+  const isGuest = !user || user.role === 'guest';
+  const orders = (!isGuest && user.email) ? State.getOrders(user.email) : [];
+  const purchased = orders.some(o => o.items && o.items.some(i => i.id === pid));
+  const alreadyReviewed = !isGuest && reviews.some(r => r.userEmail === user.email);
+
+  const ws = document.getElementById('write-section');
+  if(isGuest){
+    ws.innerHTML = '<div class="locked-msg">&#128274; <a href="index.html">Sign in</a> to leave a review. Only customers who have purchased this product can submit a review.</div>';
+  } else if(!purchased){
+    ws.innerHTML = '<div class="locked-msg">&#128274; Only customers who have purchased this product can leave a review. Place an order to unlock this.</div>';
+  } else if(alreadyReviewed){
+    ws.innerHTML = '<div class="locked-msg" style="color:var(--green);">&#10003; You have already reviewed this product. Thank you!</div>';
+  } else {
+    let picked = 0;
+    ws.innerHTML =
+      '<div class="write-card">'+
+      '<div class="write-title">Write a Review</div>'+
+      '<div class="field"><label>Your Rating<span class="req">*</span></label>'+
+      '<div class="star-pick" id="spick">'+
+      '<span onclick="pick(1)">&#9733;</span><span onclick="pick(2)">&#9733;</span><span onclick="pick(3)">&#9733;</span><span onclick="pick(4)">&#9733;</span><span onclick="pick(5)">&#9733;</span>'+
+      '</div></div>'+
+      '<div class="field"><label>Review Title<span class="req">*</span></label><input type="text" id="rti" placeholder="Summarise your experience" maxlength="80"></div>'+
+      '<div class="field"><label>Your Review<span class="req">*</span></label><textarea id="rbo" rows="4" placeholder="Tell others what you think about this product..." style="resize:vertical;"></textarea></div>'+
+      '<div class="errbox" id="rerr" style="display:none;">Please fill in all fields and select a rating.</div>'+
+      '<button class="btn btn-p btn-sm" onclick="submitRev()">Submit Review</button>'+
+      '</div>';
+
+    window.pick = function(n){
+      picked = n;
+      const stars = document.querySelectorAll('#spick span');
+      stars.forEach((s,i) => s.classList.toggle('on', i < n));
+    };
+    window.submitRev = function(){
+      const ti = document.getElementById('rti').value.trim();
+      const bo = document.getElementById('rbo').value.trim();
+      const err = document.getElementById('rerr');
+      if(!picked || !ti || !bo){ err.style.display='block'; return; }
+      err.style.display='none';
+      const rev = {
+        pid, userEmail: user.email,
+        r: user.name || user.email.split('@')[0],
+        rt: picked, ti, bo, vp: true,
+        ts: new Date().toISOString()
+      };
+      State.addReview(rev);
+      Nav.toast('Review submitted. Thank you!','s');
+      ws.innerHTML = '<div class="locked-msg" style="color:var(--green);">&#10003; You have already reviewed this product. Thank you!</div>';
+      renderReviews();
+    };
+  }
+
+  renderReviews();
+}
+
+function renderReviews(){
+  const reviews = State.getReviews(pid);
+  const list = document.getElementById('rev-list');
+  if(!reviews.length){ list.innerHTML='<div class="empty-rev">No reviews yet. Be the first to review this product.</div>'; return; }
+  list.innerHTML = reviews.map(rv=>{
+    const d = new Date(rv.ts||rv.created||Date.now());
+    const ds = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const rating = rv.rt || rv.rating || 0;
+    const fullS = Math.floor(rating);
+    const starStr = '★'.repeat(fullS)+'☆'.repeat(5-fullS);
+    const vp = rv.vp ? '<span class="rev-vp">Verified Purchase</span>' : '';
+    return '<div class="rev-card">'+
+      '<div class="rev-card-hdr">'+
+        '<div style="display:flex;align-items:center;gap:10px;"><span class="rev-name">'+rv.r+'</span>'+vp+'</div>'+
+        '<span class="rev-date">'+ds+'</span>'+
+      '</div>'+
+      '<div style="margin-bottom:6px;"><span class="rev-stars">'+starStr+'</span></div>'+
+      '<div class="rev-ti">'+rv.ti+'</div>'+
+      '<div class="rev-bo">'+rv.bo+'</div>'+
+    '</div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
