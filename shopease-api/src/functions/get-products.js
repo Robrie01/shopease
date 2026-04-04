@@ -2,7 +2,7 @@ const { app } = require('@azure/functions');
 const { CosmosClient } = require('@azure/cosmos');
 
 const client = new CosmosClient(process.env.COSMOS_CONNECTION);
-const container = client.database('shopease').container('products');
+const container = client.database('shopease').container('Products');
 
 app.http('get-products', {
   methods: ['GET'],

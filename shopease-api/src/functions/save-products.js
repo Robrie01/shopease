@@ -3,7 +3,7 @@ const { CosmosClient } = require('@azure/cosmos');
 const jwt = require('jsonwebtoken');
 
 const client = new CosmosClient(process.env.COSMOS_CONNECTION);
-const container = client.database('shopease').container('products');
+const container = client.database('shopease').container('Products');
 
 app.http('save-products', {
   methods: ['POST'],
