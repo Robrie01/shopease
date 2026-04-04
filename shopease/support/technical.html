@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase Support — Technical</title>
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/components.css">
+<style>
+.sup-back{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;color:var(--t2);margin-bottom:20px;cursor:pointer;transition:color .14s;}
+.sup-back:hover{color:var(--accent);}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;font-size:.87rem;font-weight:600;color:var(--text);transition:background .14s;user-select:none;}
+.faq-q:hover{background:var(--card2);}
+.faq-arr{transition:transform .2s;color:var(--t3);font-size:.8rem;}
+.faq-item.open .faq-arr{transform:rotate(90deg);}
+.faq-a{display:none;padding:0 18px 16px;font-size:.82rem;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);}
+.faq-a p{margin-bottom:8px;}.faq-a p:last-child{margin-bottom:0;}
+.faq-a ul{margin:6px 0 8px 18px;}.faq-a ul li{margin-bottom:4px;}
+.faq-item.open .faq-a{display:block;}
+.topic-hero{display:flex;align-items:center;gap:14px;background:var(--adim);border:1px solid rgba(79,126,247,.15);border-radius:var(--r3);padding:18px 20px;margin-bottom:24px;}
+.topic-hero-icon{font-size:1.8rem;}
+.topic-hero h2{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.topic-hero p{font-size:.78rem;color:var(--t2);}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="sup-back" onclick="window.location='../support.html'">&#8592; Back to Support</div>
+  <div class="topic-hero">
+    <div class="topic-hero-icon">⚙</div>
+    <div><h2>Technical</h2><p>Help with your account, password and site issues.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">I cannot log in to my account <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Please check that you are using the correct email address and password. Passwords are case-sensitive.</p><p>If you have forgotten your password, contact our support team and we will help you reset it.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">How do I reset my password? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>You can change your password from the Settings page once logged in. Go to Settings in the sidebar and find the Change Password section. You will need to enter your current password to set a new one.</p><p>If you cannot log in to access Settings, contact our support team for assistance.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">How do I update my account details? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Account settings including your name, email preferences and password can be managed from the Settings page, accessible from the sidebar when logged in.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">How do I delete my account? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>You can request account deletion from the Settings page under the Danger Zone section. This will permanently remove your account and all associated data in line with UK GDPR Article 17 (Right to Erasure). Account data is deleted within 30 days of the request.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">The site is not loading correctly <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Try the following steps:</p><ul><li>Refresh the page with Ctrl + Shift + R (or Cmd + Shift + R on Mac) to clear cached files</li><li>Try a different browser</li><li>Clear your browser cookies and cache</li><li>Disable any browser extensions that may be interfering</li></ul><p>If the issue persists please contact our support team with details of the browser and device you are using.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">How do I manage my cookie preferences? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Your cookie preferences can be managed via the cookie banner shown on your first visit. You can choose Essential Only or Accept All. To change your preference, clear your browser cookies and reload the site to see the banner again.</p></div>
+  </div>
+</main>
+</div>
+<script src="../js/state.js"></script>
+<script src="../js/nav.js"></script>
+<script>Nav.init({page:'support'});function tog(el){el.closest('.faq-item').classList.toggle('open');}</script>
+</body>
+</html>

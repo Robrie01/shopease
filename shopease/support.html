@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase — Support</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+<style>
+.sup-hero{background:var(--accent);border-radius:var(--r3);padding:32px 28px;margin-bottom:28px;text-align:center;}
+.sup-hero h1{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-.02em;}
+.sup-hero p{font-size:.85rem;color:rgba(255,255,255,.8);}
+.topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+.topic-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:20px;cursor:pointer;transition:border .15s,box-shadow .15s,transform .15s;text-decoration:none;display:block;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.topic-card:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(79,126,247,.12);transform:translateY(-2px);text-decoration:none;}
+.topic-icon{font-size:1.4rem;margin-bottom:10px;display:block;}
+.topic-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.topic-links{display:flex;flex-direction:column;gap:5px;}
+.topic-links span{font-size:.78rem;color:var(--accent);}
+.pop-grid{display:grid;grid-template-columns:1fr;gap:0;}
+.pop-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);font-size:.84rem;color:var(--text);cursor:pointer;transition:color .14s;}
+.pop-item:last-child{border-bottom:none;}
+.pop-item:hover{color:var(--accent);}
+.pop-arr{color:var(--t3);font-size:.8rem;}
+.sup-sections{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.sup-sec-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin-bottom:14px;}
+@media(max-width:768px){.topic-grid{grid-template-columns:1fr 1fr;}.sup-sections{grid-template-columns:1fr;}}
+@media(max-width:480px){.topic-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="sup-hero">
+    <h1>How can we help?</h1>
+    <p>Browse topics below or search our help articles for quick answers.</p>
+  </div>
+
+  <div class="sup-sec-title">FAQ TOPICS</div>
+  <div class="topic-grid">
+    <a href="support/delivery.html" class="topic-card">
+      <span class="topic-icon">🚚</span>
+      <div class="topic-title">Delivery</div>
+      <div class="topic-links">
+        <span>Where's my order?</span>
+        <span>Delivery options</span>
+        <span>Delivery timeframes</span>
+      </div>
+    </a>
+    <a href="support/returns.html" class="topic-card">
+      <span class="topic-icon">↩</span>
+      <div class="topic-title">Returns &amp; Refunds</div>
+      <div class="topic-links">
+        <span>Returns policy</span>
+        <span>How do I return?</span>
+        <span>Refund timeframes</span>
+      </div>
+    </a>
+    <a href="support/orders.html" class="topic-card">
+      <span class="topic-icon">📦</span>
+      <div class="topic-title">Order Issues</div>
+      <div class="topic-links">
+        <span>Amend or cancel order</span>
+        <span>Something's wrong with my item</span>
+        <span>Missing item</span>
+      </div>
+    </a>
+    <a href="support/products.html" class="topic-card">
+      <span class="topic-icon">🏷</span>
+      <div class="topic-title">Product &amp; Stock</div>
+      <div class="topic-links">
+        <span>Is this item in stock?</span>
+        <span>Product information</span>
+        <span>Save for later</span>
+      </div>
+    </a>
+    <a href="support/payments.html" class="topic-card">
+      <span class="topic-icon">💳</span>
+      <div class="topic-title">Payment, Promos &amp; Vouchers</div>
+      <div class="topic-links">
+        <span>Payment types accepted</span>
+        <span>Promo codes</span>
+        <span>Gift vouchers</span>
+      </div>
+    </a>
+    <a href="support/technical.html" class="topic-card">
+      <span class="topic-icon">⚙</span>
+      <div class="topic-title">Technical</div>
+      <div class="topic-links">
+        <span>Account help</span>
+        <span>Password reset</span>
+        <span>Notifications</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="sup-sections">
+    <div>
+      <div class="sup-sec-title">POPULAR FAQS</div>
+      <div class="card" style="padding:0 16px;">
+        <div class="pop-grid">
+          <div class="pop-item" onclick="window.location='support/returns.html#policy'">What is your returns policy? <span class="pop-arr">›</span></div>
+          <div class="pop-item" onclick="window.location='support/returns.html#how'">How do I return an item? <span class="pop-arr">›</span></div>
+          <div class="pop-item" onclick="window.location='support/delivery.html#where'">Where is my order? <span class="pop-arr">›</span></div>
+          <div class="pop-item" onclick="window.location='support/payments.html#promos'">How do I use a promo code? <span class="pop-arr">›</span></div>
+          <div class="pop-item" onclick="window.location='support/orders.html#cancel'">Can I cancel my order? <span class="pop-arr">›</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sup-sec-title">NEED TO GET IN TOUCH?</div>
+      <div class="card" style="text-align:center;padding:28px;">
+        <div style="font-size:2rem;margin-bottom:10px;">💬</div>
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:6px;">Contact our support team</div>
+        <p style="font-size:.78rem;color:var(--t2);margin-bottom:16px;line-height:1.6;">Our team is available Monday to Friday, 9am to 5pm GMT. We aim to respond within 24 hours.</p>
+        <button class="btn btn-p btn-full" onclick="Nav.toast('Contact page coming soon','i')">Contact Us</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<script src="js/state.js"></script>
+<script src="js/nav.js"></script>
+<script>Nav.init({page:'support'});</script>
+</body>
+</html>

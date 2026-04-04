@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ShopEase Support — Payment, Promos &amp; Vouchers</title>
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/components.css">
+<style>
+.sup-back{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;color:var(--t2);margin-bottom:20px;cursor:pointer;transition:color .14s;}
+.sup-back:hover{color:var(--accent);}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;font-size:.87rem;font-weight:600;color:var(--text);transition:background .14s;user-select:none;}
+.faq-q:hover{background:var(--card2);}
+.faq-arr{transition:transform .2s;color:var(--t3);font-size:.8rem;}
+.faq-item.open .faq-arr{transform:rotate(90deg);}
+.faq-a{display:none;padding:0 18px 16px;font-size:.82rem;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);}
+.faq-a p{margin-bottom:8px;}.faq-a p:last-child{margin-bottom:0;}
+.faq-a ul{margin:6px 0 8px 18px;}.faq-a ul li{margin-bottom:4px;}
+.faq-item.open .faq-a{display:block;}
+.topic-hero{display:flex;align-items:center;gap:14px;background:var(--adim);border:1px solid rgba(79,126,247,.15);border-radius:var(--r3);padding:18px 20px;margin-bottom:24px;}
+.topic-hero-icon{font-size:1.8rem;}
+.topic-hero h2{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.topic-hero p{font-size:.78rem;color:var(--t2);}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+<div id="topnav"></div>
+<div class="wrap">
+<div id="sidebar"></div>
+<main class="main">
+  <div class="sup-back" onclick="window.location='../support.html'">&#8592; Back to Support</div>
+  <div class="topic-hero">
+    <div class="topic-hero-icon">💳</div>
+    <div><h2>Payment, Promos &amp; Vouchers</h2><p>Help with payment methods, discount codes and gift vouchers.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">What payment methods do you accept? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>We accept the following payment methods:</p><ul><li>Visa</li><li>Mastercard</li><li>American Express (Amex)</li></ul><p>All payments are processed securely. Card details are never stored on ShopEase servers and are handled by our PCI DSS Level 1 payment provider.</p></div>
+  </div>
+  <div id="promos" class="faq-item">
+    <div class="faq-q" onclick="tog(this)">How do I use a promo code? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>You can enter a promo code at checkout in the Promo Code field. Click Apply to activate the discount. Only one promo code can be used per order.</p><p>Current codes: <strong>SAVE10</strong> for 10% off, <strong>FIRST5</strong> for £5 off your order.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">My promo code is not working <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Please check the following:</p><ul><li>The code is entered exactly as provided, with no extra spaces</li><li>The code has not expired</li><li>The code applies to the items in your cart</li></ul><p>If you are still having trouble, contact our support team with the code you are trying to use.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">Do you offer gift vouchers? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Gift vouchers are not currently available on ShopEase but we plan to introduce them in the future. Keep an eye on the site for updates.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="tog(this)">Is my payment information secure? <span class="faq-arr">›</span></div>
+    <div class="faq-a"><p>Yes. All transactions are encrypted using 256-bit SSL and processed by a PCI DSS Level 1 certified provider. ShopEase never stores your card details on our servers.</p></div>
+  </div>
+</main>
+</div>
+<script src="../js/state.js"></script>
+<script src="../js/nav.js"></script>
+<script>Nav.init({page:'support'});function tog(el){el.closest('.faq-item').classList.toggle('open');}</script>
+</body>
+</html>
