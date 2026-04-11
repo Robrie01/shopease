@@ -1,8 +1,5 @@
 ﻿.vs/
-.claude/
 node_modules/
 *.tmp
 ~*
 *.zip
-ShopEase_Bug_Tickets.doc
-ShopEase_YouTrack_Import.csv
